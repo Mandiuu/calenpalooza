@@ -61,7 +61,7 @@ header {
 .vtab { padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--card); color:var(--muted); transition:all .15s; font-family:'Inter',sans-serif; }
 .vtab:hover { color:var(--text); }
 .vtab.active { background:var(--neon); color:#000; border-color:transparent; }
-.sort-btns { display:flex; gap:4px; margin-left:auto; }
+.sort-btns { display:none; gap:4px; margin-bottom:12px; }
 .sort-btn { padding:5px 10px; border-radius:7px; font-size:11px; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--card); color:var(--muted); transition:all .15s; font-family:'Inter',sans-serif; }
 .sort-btn.active { background:rgba(255,230,0,.15); color:var(--neon); border-color:var(--neon); }
 
@@ -283,12 +283,12 @@ header {
   .btn { padding:6px 10px; font-size:11px; }
 
   .day-tabs { width:100%; gap:3px; }
-  .day-tab { flex:1; text-align:center; padding:10px 6px; font-size:13px; }
+  .day-tab { flex:1; text-align:center; padding:10px 4px; font-size:12px; }
 
   .view-toggle { gap:5px; flex-wrap:wrap; }
-  .vtab { padding:8px 10px; font-size:12px; flex:1; text-align:center; }
-  .sort-btns { margin-left:0; width:100%; }
-  .sort-btn { flex:1; text-align:center; padding:7px 8px; }
+  .vtab { padding:10px 0; font-size:13px; flex:1; text-align:center; min-width:0; }
+  .sort-btns { margin-left:0; width:100%; margin-top:2px; }
+  .sort-btn { flex:1; text-align:center; padding:8px 0; font-size:12px; }
 
   .stage-filters { flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .stage-filters::-webkit-scrollbar { display:none; }
@@ -298,11 +298,13 @@ header {
   .poster-row { line-height:1.1; margin-bottom:3px; }
   .poster-divider-tag { font-size:10px; letter-spacing:3px; padding:3px 10px 2px; }
 
-  .artist-card { padding:12px 14px 12px 18px; }
+  .artist-card { padding:12px 10px 12px 16px; }
   .card-name { font-size:15px; }
   .card-time { font-size:12px; }
   .sdot { font-size:11px; padding:3px 8px; }
-  .time-lbl { width:44px; min-width:44px; padding-right:8px; }
+  .time-lbl { width:44px; min-width:44px; padding-right:8px; font-size:10px; }
+  .hbadge { font-size:9px; padding:2px 5px; }
+  .check { right:10px; }
 
   .chip { padding:7px 13px 7px 11px; font-size:13px; }
   .chip-time { width:44px; min-width:44px; padding-right:8px; }
@@ -350,10 +352,10 @@ header {
     <div class="view-toggle">
       <button class="vtab active" id="vt-poster" onclick="setView('poster')">✦ Póster</button>
       <button class="vtab" id="vt-cards"  onclick="setView('cards')">▦ Tarjetas</button>
-      <div class="sort-btns" id="sort-btns" style="display:none">
-        <button class="sort-btn active" id="sb-desc" onclick="setSort('desc')">↓ Últimos</button>
-        <button class="sort-btn" id="sb-asc"  onclick="setSort('asc')">↑ Primeros</button>
-      </div>
+    </div>
+    <div class="sort-btns" id="sort-btns" style="display:none;margin-bottom:10px">
+      <button class="sort-btn active" id="sb-desc" onclick="setSort('desc')">↓ Últimos primero</button>
+      <button class="sort-btn" id="sb-asc"  onclick="setSort('asc')">↑ Primeros primero</button>
     </div>
 
     <!-- Stage filters (hidden in poster view) -->
@@ -555,9 +557,9 @@ let currentDay  = 0;
 let viewMode    = 'poster';
 let sortOrder   = 'desc';
 let stageFilter = 'all';
-let selected    = new Set();  // my picks
-let friendKeys  = new Set();  // friend's picks (loaded from shared URL)
-let isFriendMode = false;
+let selected    = new Set();  // my picks (always editable)
+let friendKeys  = new Set();  // friend's picks (loaded from URL, read-only)
+let hasFriend   = false;      // true when URL contains friend's picks
 
 // ═══════════════════════════════════════════════
 // UTILS
@@ -565,21 +567,58 @@ let isFriendMode = false;
 const toMins = t => { let [h,m]=t.split(':').map(Number); if(h<6)h+=24; return h*60+m; };
 const mkKey  = (d,n) => d+'|'+n;
 
+// URL format:
+//   solo mode:   "a:K1,K2"            → you are person A, no friend yet
+//   compare mode:"a:K1,K2;;b:K3,K4"  → a=friend (cyan), b=you (yellow)
+//
+// Flow:
+//   A selects → shares "a:A_PICKS"
+//   B opens   → sees A in cyan → selects own → URL becomes "a:A_PICKS;;b:B_PICKS"
+//   B shares  → A opens "a:A_PICKS;;b:B_PICKS" → full comparison shown to both
+
 function loadFromHash() {
   const raw = location.hash.slice(1);
   if (!raw) return;
   try {
     const decoded = decodeURIComponent(raw);
-    // Format: "f:KEY1,KEY2" = friend mode  |  "KEY1,KEY2" = own picks (legacy)
-    if (decoded.startsWith('f:')) {
-      isFriendMode = true;
-      const parts = decoded.slice(2).split(';;m:');
-      parts[0].split(',').filter(Boolean).forEach(k => friendKeys.add(k));
-      if (parts[1]) parts[1].split(',').filter(Boolean).forEach(k => selected.add(k));
+    if (decoded.includes(';;b:')) {
+      // compare mode: a=friend, b=me
+      hasFriend = true;
+      const [aPart, bPart] = decoded.split(';;b:');
+      const aKeys = aPart.startsWith('a:') ? aPart.slice(2) : aPart;
+      aKeys.split(',').filter(Boolean).forEach(k => friendKeys.add(k));
+      bPart.split(',').filter(Boolean).forEach(k => selected.add(k));
     } else {
-      decoded.split(',').filter(Boolean).forEach(k => selected.add(k));
+      // solo mode: a=friend (I received their link), my picks start empty
+      hasFriend = true;
+      const aKeys = decoded.startsWith('a:') ? decoded.slice(2) : decoded;
+      aKeys.split(',').filter(Boolean).forEach(k => friendKeys.add(k));
     }
   } catch(e){}
+}
+
+function updateHash() {
+  const myStr = [...selected].join(',');
+  const frStr = [...friendKeys].join(',');
+  let pageHash = '';
+  let shareHash = '';
+
+  if (hasFriend && frStr) {
+    // page URL always keeps both sets so browser back works
+    pageHash = 'a:' + frStr + (myStr ? ';;b:' + myStr : '');
+    // share URL = same (whoever opens this sees full comparison)
+    shareHash = pageHash;
+  } else {
+    // solo: encode my picks as "a:" so recipient sees them as the friend's
+    pageHash  = myStr ? 'a:' + myStr : '';
+    shareHash = pageHash;
+  }
+
+  const base = location.href.split('#')[0];
+  history.replaceState(null, '', base + (pageHash ? '#' + encodeURIComponent(pageHash) : ''));
+  const shareUrl = base + (shareHash ? '#' + encodeURIComponent(shareHash) : '');
+  const urlEl = document.getElementById('share-url');
+  urlEl.textContent = myStr ? shareUrl : (hasFriend ? '← Elige tus shows para compartir' : 'Selecciona artistas para generar tu link…');
 }
 
 function findConflicts() {
@@ -672,7 +711,6 @@ function renderPoster() {
   days.forEach(di => {
     const block = document.createElement('div');
     block.className = 'poster-day-block';
-
     block.innerHTML = `
       <div class="poster-divider">
         <div class="poster-divider-rule"><span></span><span></span></div>
@@ -683,7 +721,6 @@ function renderPoster() {
     [0,1,2,3].forEach(t => {
       const names = POSTER_TIERS[di][t] || [];
       if (!names.length) return;
-
       const row = document.createElement('div');
       row.className = 'poster-row';
 
@@ -712,10 +749,8 @@ function renderPoster() {
           row.appendChild(sep);
         }
       });
-
       block.appendChild(row);
     });
-
     wrap.appendChild(block);
   });
 
@@ -729,7 +764,6 @@ function renderPoster() {
 function renderTimeline() {
   const el = document.getElementById('content');
   const days = currentDay===3 ? [0,1,2] : [currentDay];
-
   let artists = [];
   days.forEach(di => {
     const day = SCH[di] || [];
@@ -758,7 +792,6 @@ function renderTimeline() {
       const isMine=selected.has(key), isFriend=friendKeys.has(key), isMatch=isMine&&isFriend;
       let cls = 'artist-card';
       if (isMatch) cls+=' match sel'; else if (isMine) cls+=' sel'; else if (isFriend) cls+=' friend';
-      const checkColor = isMatch ? 'var(--lotus)' : isFriend ? 'var(--banco)' : 'var(--neon)';
       return `<div class="${cls}" data-s="${a.s}" onclick="toggle(${a.di},${JSON.stringify(a.n)})">
         <div>
           <div class="card-name">${a.n}${a.h?` <span class="hbadge">HEADLINER</span>`:''}</div>
@@ -766,10 +799,9 @@ function renderTimeline() {
             <span class="card-time">🕐 ${a.st}–${a.en}</span>
             <span class="sdot" data-s="${a.s}">${SM[a.s]?.short||a.s}</span>
             ${currentDay===3?`<span style="font-size:10px;color:var(--muted)">${DAY_NAMES[a.di]}</span>`:''}
-            ${isFriend&&!isMine?`<span style="font-size:10px;color:var(--banco)">👤 amigo/a</span>`:''}
           </div>
         </div>
-        <span class="check" style="color:${checkColor}">${isMatch?'💚':isFriend?'👤':'✓'}</span>
+        <span class="check">${isMatch?'💚':isFriend?'👤':'✓'}</span>
       </div>`;
     }).join('');
     bucket.innerHTML = `<div class="time-lbl">${lbl}</div><div class="time-artists">${cards}</div>`;
@@ -782,7 +814,6 @@ function renderTimeline() {
 // AGENDA PANEL
 // ═══════════════════════════════════════════════
 function renderAgenda() {
-  // My picks list
   const all = [];
   selected.forEach(k=>{ const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[di]?.find(x=>x.n===n); if(a) all.push({...a,di:+di,key:k}); });
   all.sort((a,b)=>a.di!==b.di?a.di-b.di:toMins(a.st)-toMins(b.st));
@@ -797,45 +828,51 @@ function renderAgenda() {
         ${conflicts.map(([a,b])=>`<div class="conflict-row"><b>${a.n}</b> (${a.st}) ↔ <b>${b.n}</b> (${b.st}) · ${DAY_NAMES[a.di]}</div>`).join('')}
        </div>` : '';
 
-  // Friend mode: show banner + live comparison instead of manual compare box
-  if (isFriendMode) {
-    document.getElementById('compare-box').style.display = 'none';
-
-    const matches   = [...selected].filter(k=>friendKeys.has(k));
-    const onlyMine  = [...selected].filter(k=>!friendKeys.has(k));
-    const onlyFriend= [...friendKeys].filter(k=>!selected.has(k));
-    const lbl = k => { const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[+di]?.find(x=>x.n===n); return `${n} · ${a?a.st+' ':''}${DAY_NAMES[+di]||''}` };
-
-    const liveEl = document.getElementById('compare-live-section');
+  // Comparison panel — always visible when hasFriend
+  const liveEl = document.getElementById('compare-live-section');
+  const compareBox = document.getElementById('compare-box');
+  if (hasFriend) {
+    compareBox.style.display = 'none';
     liveEl.style.display = 'block';
+
+    const matches    = [...selected].filter(k=>friendKeys.has(k));
+    const onlyMine   = [...selected].filter(k=>!friendKeys.has(k));
+    const onlyFriend = [...friendKeys].filter(k=>!selected.has(k));
+    const lbl = k => {
+      const[di,...p]=k.split('|'); const n=p.join('|');
+      const a=SCH[+di]?.find(x=>x.n===n);
+      return `${n}<span style="opacity:.6;font-size:10px"> · ${a?a.st+' · ':''}${DAY_NAMES[+di]||''}</span>`;
+    };
+
     liveEl.innerHTML = `
       <div class="friend-banner">
-        <strong>👤 Modo comparación</strong>
-        Ves en <span style="color:var(--banco)">celeste</span> los shows de tu amigo/a.<br>
-        Selecciona los tuyos en <span style="color:var(--neon)">amarillo</span>.
+        <strong>👥 Modo comparación activo</strong>
+        <span style="color:var(--banco)">●</span> Celeste = picks de tu amigo/a &nbsp;
+        <span style="color:var(--neon)">●</span> Amarillo = los tuyos &nbsp;
+        <span style="color:var(--lotus)">●</span> Verde = coincidencia
       </div>
-      <div style="background:var(--surface);border-radius:12px;padding:12px;margin-top:4px">
-        ${matches.length ? `
-          <div class="compare-section-ttl" style="color:var(--lotus)">✅ COINCIDENCIAS (${matches.length})</div>
-          ${matches.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')}
-        ` : `<div style="font-size:11px;color:var(--muted);padding:4px 0">Aún sin coincidencias — sigue eligiendo.</div>`}
+      <div style="background:var(--surface);border-radius:12px;padding:12px;margin-top:6px">
+        <div class="compare-section-ttl" style="color:var(--lotus)">💚 COINCIDENCIAS (${matches.length})</div>
+        ${matches.length
+          ? matches.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')
+          : `<div style="font-size:11px;color:var(--muted);padding:4px 2px">Aún sin coincidencias — sigue eligiendo.</div>`}
         ${onlyMine.length ? `
-          <div class="compare-section-ttl" style="color:var(--neon);margin-top:8px">🟡 SOLO TÚ (${onlyMine.length})</div>
-          ${onlyMine.map(k=>`<div class="c-mine">${lbl(k)}</div>`).join('')}
-        ` : ''}
+          <div class="compare-section-ttl" style="color:var(--neon);margin-top:10px">🟡 SOLO TÚ (${onlyMine.length})</div>
+          ${onlyMine.map(k=>`<div class="c-mine">${lbl(k)}</div>`).join('')}` : ''}
         ${onlyFriend.length ? `
-          <div class="compare-section-ttl" style="color:var(--banco);margin-top:8px">🔵 SOLO TU AMIGO/A (${onlyFriend.length})</div>
-          ${onlyFriend.map(k=>`<div class="c-friend">${lbl(k)}</div>`).join('')}
-        ` : ''}
+          <div class="compare-section-ttl" style="color:var(--banco);margin-top:10px">🔵 SOLO TU AMIGO/A (${onlyFriend.length})</div>
+          ${onlyFriend.map(k=>`<div class="c-friend">${lbl(k)}</div>`).join('')}` : ''}
       </div>`;
+  } else {
+    compareBox.style.display = 'block';
+    liveEl.style.display = 'none';
   }
 
   const listEl = document.getElementById('agenda-list');
   if (!all.length) {
-    listEl.innerHTML = isFriendMode
+    listEl.innerHTML = hasFriend
       ? '<div class="empty-agenda">Toca los artistas<br>que quieres ver 👆</div>'
       : '<div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>';
-    document.getElementById('share-url').textContent = 'Selecciona artistas para generar tu link…';
     updateHash(); return;
   }
   const byDay={0:[],1:[],2:[]};
@@ -863,55 +900,45 @@ function removeKey(k) {
   render(); renderAgenda();
 }
 
-function updateHash() {
-  const myKeys  = [...selected].join(',');
-  const fkStr   = [...friendKeys].join(',');
-  let hash = '';
-  if (isFriendMode && fkStr) {
-    hash = 'f:'+fkStr + (myKeys ? ';;m:'+myKeys : '');
-  } else if (myKeys) {
-    hash = myKeys;
-  }
-  const url = location.href.split('#')[0] + (hash ? '#'+encodeURIComponent(hash) : '');
-  // Share URL always encodes as friend-shareable link (f: prefix)
-  const shareHash = isFriendMode
-    ? (myKeys ? 'f:'+myKeys+';;m:'+'' : '') // share my picks as friend keys for next person
-    : (myKeys ? 'f:'+myKeys : '');
-  const shareUrl = location.href.split('#')[0] + (shareHash ? '#'+encodeURIComponent(shareHash) : '');
-  document.getElementById('share-url').textContent = myKeys ? shareUrl : 'Selecciona artistas para generar tu link…';
-  history.replaceState(null,'', url);
-}
-
 // ═══════════════════════════════════════════════
-// SHARE / COMPARE
+// SHARE
 // ═══════════════════════════════════════════════
 function copyLink() {
-  const url=document.getElementById('share-url').textContent;
-  if(url.startsWith('Selecciona')){showToast('Primero selecciona artistas');return;}
+  updateHash();
+  const url = document.getElementById('share-url').textContent;
+  if (url.startsWith('Selecciona') || url.startsWith('←')) { showToast('Primero selecciona artistas'); return; }
   navigator.clipboard.writeText(url).then(()=>showToast('✓ Link copiado'));
 }
 function shareWA() {
-  const url=document.getElementById('share-url').textContent;
-  if(url.startsWith('Selecciona')){showToast('Primero selecciona artistas');return;}
-  window.open(`https://wa.me/?text=${encodeURIComponent('🎸 Lollapalooza Chile 2026 — ¿a cuáles vamos juntos? ('+selected.size+' shows):\n'+url)}`,'_blank');
+  updateHash();
+  const url = document.getElementById('share-url').textContent;
+  if (url.startsWith('Selecciona') || url.startsWith('←')) { showToast('Primero selecciona artistas'); return; }
+  const msg = hasFriend
+    ? `🎸 Lollapalooza Chile 2026 — acá están mis picks para comparar con los tuyos:\n${url}`
+    : `🎸 Lollapalooza Chile 2026 — ¿a cuáles vamos juntos? Abre el link y elige los tuyos:\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 }
 function doCompare() {
   const input=document.getElementById('friend-url').value.trim();
   const res=document.getElementById('compare-result');
   if(!input){res.innerHTML='<p style="font-size:11px;color:#888">Pega un link primero.</p>';return;}
-  let fKeys;
   try {
     const h=input.includes('#')?input.split('#')[1]:input;
     const decoded=decodeURIComponent(h);
-    const raw = decoded.startsWith('f:') ? decoded.slice(2).split(';;m:')[0] : decoded;
-    fKeys=new Set(raw.split(',').filter(Boolean));
-  } catch(e){res.innerHTML='<p style="font-size:11px;color:#f88">Link inválido.</p>';return;}
-  const lbl=k=>{const[di,...p]=k.split('|');return p.join('|')+' · '+(DAY_NAMES[+di]||'?');};
-  const common=[...selected].filter(k=>fKeys.has(k));
-  const onlyF=[...fKeys].filter(k=>!selected.has(k));
-  res.innerHTML=`
-    ${common.length?`<div style="font-size:11px;font-weight:700;color:var(--lotus);margin-bottom:5px">✅ Coinciden (${common.length}):</div>${common.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')}`:'<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Sin artistas en común.</div>'}
-    ${onlyF.length?`<div style="font-size:11px;font-weight:700;color:var(--banco);margin:7px 0 4px">Solo tu amigo/a (${onlyF.length}):</div>${onlyF.map(k=>`<div class="c-only">${lbl(k)}</div>`).join('')}`:''}`;
+    let aKeys;
+    if (decoded.includes(';;b:')) {
+      aKeys = decoded.split(';;b:')[0].replace(/^a:/,'');
+    } else {
+      aKeys = decoded.replace(/^a:/,'');
+    }
+    const fSet = new Set(aKeys.split(',').filter(Boolean));
+    const lbl=k=>{const[di,...p]=k.split('|');return p.join('|')+' · '+(DAY_NAMES[+di]||'?');};
+    const common=[...selected].filter(k=>fSet.has(k));
+    const onlyF=[...fSet].filter(k=>!selected.has(k));
+    res.innerHTML=`
+      ${common.length?`<div style="font-size:11px;font-weight:700;color:var(--lotus);margin-bottom:5px">✅ Coinciden (${common.length}):</div>${common.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')}`:'<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Sin artistas en común.</div>'}
+      ${onlyF.length?`<div style="font-size:11px;font-weight:700;color:var(--banco);margin:7px 0 4px">Solo tu amigo/a (${onlyF.length}):</div>${onlyF.map(k=>`<div class="c-only">${lbl(k)}</div>`).join('')}`:''}`;
+  } catch(e){res.innerHTML='<p style="font-size:11px;color:#f88">Link inválido.</p>';}
 }
 
 // ═══════════════════════════════════════════════
@@ -929,6 +956,7 @@ function showToast(msg) {
 loadFromHash();
 render();
 renderAgenda();
+
 </script>
 </body>
 </html>
