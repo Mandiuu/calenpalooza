@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lollapalooza Chile 2026 — Mi Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --surface: #0f0f1e;
+  --card: #14142a;
+  --border: #ffffff12;
+  --text: #f0f0f5;
+  --muted: #888899;
+  --cenco: #ff3366;
+  --banco: #00c4ff;
+  --perrys: #b84fff;
+  --cupula: #ff9500;
+  --lotus: #00e57b;
+  --neon: #ffe600;
+  --conflict: #ff4444;
+  --pink: #f0b5aa;
+  --cyan: #2eccc4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* ── HEADER ── */
+header {
+  background:linear-gradient(180deg,#000 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--border);
+  padding:16px 24px;
+  position:sticky; top:0; z-index:100;
+  backdrop-filter:blur(12px);
+}
+.header-inner { max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,3.5vw,38px); letter-spacing:2px; color:var(--pink); }
+.logo-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+.header-right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.count-badge { background:var(--neon); color:#000; font-weight:700; font-size:12px; padding:5px 12px; border-radius:20px; }
+.btn { background:var(--card); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all .15s; font-family:'Inter',sans-serif; }
+.btn:hover { background:#1e1e38; }
+.btn.primary { background:var(--neon); color:#000; border:none; font-weight:700; }
+.btn.primary:hover { background:#ffd900; }
+
+/* ── LAYOUT ── */
+.main { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:1fr 320px; min-height:calc(100vh - 73px); }
+
+/* ── LEFT PANEL ── */
+.left-panel { border-right:1px solid var(--border); padding:20px 24px 40px; }
+
+/* Day tabs */
+.day-tabs { display:flex; gap:4px; margin-bottom:18px; background:var(--surface); padding:5px; border-radius:10px; width:fit-content; }
+.day-tab { padding:8px 16px; border-radius:7px; cursor:pointer; font-size:13px; font-weight:600; transition:all .15s; color:var(--muted); background:transparent; border:none; font-family:'Inter',sans-serif; }
+.day-tab.active { background:var(--neon); color:#000; }
+.day-tab:hover:not(.active) { color:var(--text); background:var(--card); }
+
+/* View toggle */
+.view-toggle { display:flex; gap:6px; margin-bottom:18px; align-items:center; flex-wrap:wrap; }
+.vtab { padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--card); color:var(--muted); transition:all .15s; font-family:'Inter',sans-serif; }
+.vtab:hover { color:var(--text); }
+.vtab.active { background:var(--neon); color:#000; border-color:transparent; }
+.sort-btns { display:flex; gap:4px; margin-left:auto; }
+.sort-btn { padding:5px 10px; border-radius:7px; font-size:11px; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--card); color:var(--muted); transition:all .15s; font-family:'Inter',sans-serif; }
+.sort-btn.active { background:rgba(255,230,0,.15); color:var(--neon); border-color:var(--neon); }
+
+/* Stage filters */
+.stage-filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+.sf { padding:5px 11px; border-radius:20px; font-size:11px; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--card); color:var(--muted); transition:all .12s; font-family:'Inter',sans-serif; }
+.sf:hover { color:var(--text); }
+.sf.active { color:#000 !important; border-color:transparent; }
+.sf[data-s="all"].active { background:#eee; }
+.sf[data-s="Cenco Malls Stage"].active { background:var(--cenco); }
+.sf[data-s="Banco de Chile Stage"].active { background:var(--banco); }
+.sf[data-s="Perry's Stage"].active { background:var(--perrys); }
+.sf[data-s="Cupula"].active { background:var(--cupula); }
+.sf[data-s="Lotus Stage"].active { background:var(--lotus); }
+
+/* ─────────────────────────────────────
+   POSTER VIEW
+───────────────────────────────────── */
+.poster-wrap {
+  background: var(--pink);
+  border-radius: 12px;
+  padding: 24px 18px 28px;
+  font-family: 'Bebas Neue', sans-serif;
+  text-align: center;
+}
+.poster-day-block { margin-bottom: 22px; }
+.poster-day-block:last-child { margin-bottom: 0; }
+
+/* Day divider */
+.poster-divider {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.poster-divider-rule {
+  flex: 1; display: flex; flex-direction: column; gap: 3px;
+}
+.poster-divider-rule span {
+  display: block; height: 2.5px;
+  background: var(--cyan); border-radius: 2px;
+}
+.poster-divider-tag {
+  font-size: clamp(10px,1.4vw,13px);
+  letter-spacing: 5px;
+  color: #111;
+  background: var(--neon);
+  padding: 3px 14px 2px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* Artist name rows */
+.poster-row { line-height: 1.05; margin-bottom: 2px; }
+
+.pn {
+  cursor: pointer;
+  color: #111;
+  display: inline;
+  border-radius: 3px;
+  transition: opacity .1s;
+  font-family: 'Bebas Neue', sans-serif;
+}
+.pn:hover { opacity: 0.45; }
+.pn.sel {
+  background: var(--neon);
+  color: #000 !important;
+  padding: 0 5px;
+  border-radius: 3px;
+  opacity: 1 !important;
+}
+
+/* Tier sizes — mobile-first, big and readable */
+.t0 { font-size: clamp(38px,9vw,72px); letter-spacing: 0.5px; line-height: 1; }
+.t1 { font-size: clamp(14px,3.5vw,20px); letter-spacing: 1.5px; line-height: 1.3; }
+.t2 { font-size: clamp(14px,3.5vw,20px); letter-spacing: 1.5px; line-height: 1.3; color: #222; }
+.t3 { font-size: clamp(14px,3.5vw,20px); letter-spacing: 1.5px; line-height: 1.3; color: #333; }
+
+/* Separators */
+.psep {
+  font-family: 'Bebas Neue', sans-serif;
+  color: #111;
+  display: inline;
+}
+.psep.t0 { font-size: clamp(30px,7vw,56px); margin: 0 5px; opacity: 1; }
+.psep.t1 { font-size: clamp(11px,2.8vw,17px); margin: 0 3px; opacity: 0.4; }
+.psep.t2 { font-size: clamp(11px,2.8vw,17px); margin: 0 3px; opacity: 0.4; }
+.psep.t3 { font-size: clamp(11px,2.8vw,17px); margin: 0 3px; opacity: 0.35; }
+
+/* ─────────────────────────────────────
+   CARDS VIEW
+───────────────────────────────────── */
+.cards-wrap { display:flex; flex-direction:column; gap:4px; }
+.time-bucket { display:flex; align-items:flex-start; gap:0; }
+.time-lbl { width:52px; min-width:52px; font-size:11px; color:var(--muted); padding-top:13px; text-align:right; padding-right:12px; font-weight:500; flex-shrink:0; }
+.time-artists { flex:1; display:flex; flex-direction:column; gap:3px; padding:2px 0; }
+.artist-card { padding:10px 16px; border-radius:10px; cursor:pointer; background:var(--card); border:1.5px solid var(--border); transition:all .15s; display:flex; align-items:center; gap:12px; position:relative; overflow:hidden; }
+.artist-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.artist-card[data-s="Cenco Malls Stage"]::before { background:var(--cenco); }
+.artist-card[data-s="Banco de Chile Stage"]::before { background:var(--banco); }
+.artist-card[data-s="Perry's Stage"]::before { background:var(--perrys); }
+.artist-card[data-s="Cupula"]::before { background:var(--cupula); }
+.artist-card[data-s="Lotus Stage"]::before { background:var(--lotus); }
+.artist-card:hover { background:#1a1a30; border-color:#ffffff22; transform:translateX(2px); }
+.artist-card.sel { border-color:var(--neon) !important; background:#1f1d0a; }
+.check { display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--neon); font-weight:700; font-size:14px; }
+.artist-card.sel .check { display:block; }
+.card-name { font-weight:600; font-size:14px; }
+.card-meta { display:flex; align-items:center; gap:7px; margin-top:3px; flex-wrap:wrap; }
+.card-time { font-size:11px; color:var(--muted); }
+.sdot { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
+.sdot[data-s="Cenco Malls Stage"] { background:#ff336620; color:var(--cenco); }
+.sdot[data-s="Banco de Chile Stage"] { background:#00c4ff20; color:var(--banco); }
+.sdot[data-s="Perry's Stage"] { background:#b84fff20; color:var(--perrys); }
+.sdot[data-s="Cupula"] { background:#ff950020; color:var(--cupula); }
+.sdot[data-s="Lotus Stage"] { background:#00e57b20; color:var(--lotus); }
+.hbadge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; background:var(--neon); color:#000; letter-spacing:.5px; }
+
+/* ─────────────────────────────────────
+   CHIPS VIEW
+───────────────────────────────────── */
+.chips-wrap { display:flex; flex-direction:column; }
+.chip-bucket { display:flex; align-items:flex-start; padding:6px 0; border-bottom:1px solid var(--border); }
+.chip-bucket:last-child { border-bottom:none; }
+.chip-time { width:52px; min-width:52px; font-size:11px; color:var(--muted); padding-top:5px; text-align:right; padding-right:12px; flex-shrink:0; font-weight:500; }
+.chip-row { flex:1; display:flex; flex-wrap:wrap; gap:5px; }
+.chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px 4px 8px; border-radius:20px;
+  font-size:11px; font-weight:600; cursor:pointer;
+  border:1.5px solid var(--border); background:var(--card);
+  transition:all .12s; white-space:nowrap; position:relative; overflow:hidden;
+  font-family:'Inter',sans-serif;
+}
+.chip::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.chip[data-s="Cenco Malls Stage"]::before { background:var(--cenco); }
+.chip[data-s="Banco de Chile Stage"]::before { background:var(--banco); }
+.chip[data-s="Perry's Stage"]::before { background:var(--perrys); }
+.chip[data-s="Cupula"]::before { background:var(--cupula); }
+.chip[data-s="Lotus Stage"]::before { background:var(--lotus); }
+.chip:hover { background:#1e1e38; transform:scale(1.04); }
+.chip.sel { border-color:var(--neon) !important; background:#1f1d0a; color:var(--neon); }
+.chip-ck { display:none; font-size:9px; }
+.chip.sel .chip-ck { display:inline; }
+
+/* ── RIGHT PANEL (AGENDA) ── */
+.agenda-panel { padding:20px 18px; position:sticky; top:73px; height:calc(100vh - 73px); overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+.agenda-panel::-webkit-scrollbar { width:3px; }
+.agenda-panel::-webkit-scrollbar-thumb { background:var(--border); }
+.panel-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; }
+
+.conflict-box { background:#ff444410; border:1px solid #ff444438; border-radius:10px; padding:12px 14px; }
+.conflict-ttl { font-size:12px; font-weight:700; color:var(--conflict); letter-spacing:.3px; margin-bottom:6px; }
+.conflict-row { font-size:11px; color:#ff9999; padding:4px 0; border-bottom:1px solid #ff444418; line-height:1.5; }
+.conflict-row:last-child { border-bottom:none; }
+
+.agenda-day-ttl { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+.agenda-item { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; background:var(--card); margin-bottom:3px; border:1px solid var(--border); }
+.agenda-item.has-conflict { border-color:#ff444430; background:#ff44440a; }
+.a-strip { width:3px; height:34px; border-radius:2px; flex-shrink:0; }
+.a-strip[data-s="Cenco Malls Stage"] { background:var(--cenco); }
+.a-strip[data-s="Banco de Chile Stage"] { background:var(--banco); }
+.a-strip[data-s="Perry's Stage"] { background:var(--perrys); }
+.a-strip[data-s="Cupula"] { background:var(--cupula); }
+.a-strip[data-s="Lotus Stage"] { background:var(--lotus); }
+.a-info { flex:1; min-width:0; }
+.a-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.a-detail { font-size:10px; color:var(--muted); margin-top:2px; }
+.a-rm { font-size:16px; color:var(--muted); cursor:pointer; background:none; border:none; padding:2px; flex-shrink:0; font-family:'Inter',sans-serif; }
+.a-rm:hover { color:var(--conflict); }
+.empty-agenda { text-align:center; padding:32px 12px; color:var(--muted); font-size:12px; line-height:1.7; }
+
+.share-box { background:var(--surface); border-radius:12px; padding:14px; }
+.share-ttl { font-size:12px; font-weight:600; margin-bottom:8px; }
+.share-url { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-size:10px; color:var(--muted); word-break:break-all; margin-bottom:8px; line-height:1.5; min-height:34px; font-family:monospace; }
+.share-btns { display:flex; gap:7px; }
+
+.compare-box { background:var(--surface); border-radius:12px; padding:14px; }
+.compare-ttl { font-size:12px; font-weight:600; margin-bottom:8px; }
+.compare-input { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:7px; font-size:11px; font-family:'Inter',sans-serif; margin-bottom:7px; }
+.compare-input:focus { outline:none; border-color:var(--banco); }
+.c-match { font-size:11px; padding:5px 9px; border-radius:6px; margin-bottom:3px; background:#00e57b12; color:var(--lotus); border:1px solid #00e57b28; }
+.c-only { font-size:11px; padding:5px 9px; border-radius:6px; margin-bottom:3px; background:var(--card); color:var(--muted); border:1px solid var(--border); }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--neon); color:#000; padding:9px 18px; border-radius:20px; font-size:12px; font-weight:700; transition:transform .25s; z-index:1000; pointer-events:none; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ── MOBILE ── */
+@media(max-width:860px) {
+  .main { grid-template-columns:1fr; }
+  .left-panel { border-right:none; padding:14px 12px 32px; }
+  .agenda-panel { position:static; height:auto; padding:16px 12px 32px; border-top:1px solid var(--border); }
+
+  header { padding:12px 16px; }
+  .logo { font-size:22px; }
+  .logo-sub { font-size:9px; letter-spacing:2px; }
+  .count-badge { font-size:11px; padding:4px 10px; }
+  .btn { padding:6px 10px; font-size:11px; }
+
+  .day-tabs { width:100%; gap:3px; }
+  .day-tab { flex:1; text-align:center; padding:10px 6px; font-size:13px; }
+
+  .view-toggle { gap:5px; flex-wrap:wrap; }
+  .vtab { padding:8px 10px; font-size:12px; flex:1; text-align:center; }
+  .sort-btns { margin-left:0; width:100%; }
+  .sort-btn { flex:1; text-align:center; padding:7px 8px; }
+
+  .stage-filters { flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .stage-filters::-webkit-scrollbar { display:none; }
+  .sf { white-space:nowrap; flex-shrink:0; padding:7px 14px; font-size:12px; }
+
+  .poster-wrap { padding:14px 8px 18px; border-radius:10px; }
+  .poster-row { line-height:1.1; margin-bottom:3px; }
+  .poster-divider-tag { font-size:10px; letter-spacing:3px; padding:3px 10px 2px; }
+
+  .artist-card { padding:12px 14px 12px 18px; }
+  .card-name { font-size:15px; }
+  .card-time { font-size:12px; }
+  .sdot { font-size:11px; padding:3px 8px; }
+  .time-lbl { width:44px; min-width:44px; padding-right:8px; }
+
+  .chip { padding:7px 13px 7px 11px; font-size:13px; }
+  .chip-time { width:44px; min-width:44px; padding-right:8px; }
+
+  .a-name { font-size:13px; }
+  .a-detail { font-size:11px; }
+  .panel-title { font-size:22px; }
+  .share-btns { flex-direction:column; }
+  .share-btns .btn { width:100%; padding:10px; text-align:center; }
+  .compare-input { font-size:13px; padding:10px 12px; }
+  .c-match, .c-only { font-size:12px; padding:7px 11px; }
+  .conflict-row { font-size:12px; }
+  .toast { font-size:13px; padding:11px 22px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">LOLLAPALOOZA CHILE 2026</div>
+      <div class="logo-sub">13 · 14 · 15 de Marzo · Parque O'Higgins · Santiago</div>
+    </div>
+    <div class="header-right">
+      <span class="count-badge" id="count-badge">0 shows</span>
+      <button class="btn" onclick="clearAll()">✕ Limpiar</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <!-- Day tabs -->
+    <div class="day-tabs">
+      <button class="day-tab active" onclick="setDay(0,this)">VIE 13</button>
+      <button class="day-tab" onclick="setDay(1,this)">SÁB 14</button>
+      <button class="day-tab" onclick="setDay(2,this)">DOM 15</button>
+      <button class="day-tab" onclick="setDay(3,this)">TODOS</button>
+    </div>
+
+    <!-- View toggle -->
+    <div class="view-toggle">
+      <button class="vtab active" id="vt-poster" onclick="setView('poster')">✦ Póster</button>
+      <button class="vtab" id="vt-cards"  onclick="setView('cards')">▦ Tarjetas</button>
+      <div class="sort-btns" id="sort-btns" style="display:none">
+        <button class="sort-btn active" id="sb-desc" onclick="setSort('desc')">↓ Últimos</button>
+        <button class="sort-btn" id="sb-asc"  onclick="setSort('asc')">↑ Primeros</button>
+      </div>
+    </div>
+
+    <!-- Stage filters (hidden in poster view) -->
+    <div class="stage-filters" id="stage-filters" style="display:none">
+      <button class="sf active" data-s="all" onclick="setStage('all',this)">Todos</button>
+      <button class="sf" data-s="Cenco Malls Stage" onclick="setStage('Cenco Malls Stage',this)">🔴 Cenco Malls</button>
+      <button class="sf" data-s="Banco de Chile Stage" onclick="setStage('Banco de Chile Stage',this)">🔵 Banco de Chile</button>
+      <button class="sf" data-s="Perry's Stage" onclick="setStage(&quot;Perry's Stage&quot;,this)">🟣 Perry's</button>
+      <button class="sf" data-s="Cupula" onclick="setStage('Cupula',this)">🟠 Cúpula</button>
+      <button class="sf" data-s="Lotus Stage" onclick="setStage('Lotus Stage',this)">🟢 Lotus</button>
+    </div>
+
+    <!-- Main content area -->
+    <div id="content"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="agenda-panel">
+    <div class="panel-title">⚡ MI AGENDA</div>
+    <div id="conflicts"></div>
+    <div id="agenda-list">
+      <div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>
+    </div>
+    <div class="share-box">
+      <div class="share-ttl">📤 Comparte con amigos</div>
+      <div class="share-url" id="share-url">Selecciona artistas para generar tu link…</div>
+      <div class="share-btns">
+        <button class="btn primary" onclick="copyLink()">Copiar link</button>
+        <button class="btn" onclick="shareWA()">💬 WhatsApp</button>
+      </div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-ttl">👥 Comparar con amigo/a</div>
+      <input class="compare-input" id="friend-url" placeholder="Pega el link de tu amigo/a…">
+      <button class="btn" style="width:100%;margin-bottom:8px" onclick="doCompare()">Ver coincidencias</button>
+      <div id="compare-result"></div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const SM = {
+  'Cenco Malls Stage':   { color:'#ff3366', short:'CENCO'    },
+  'Banco de Chile Stage':{ color:'#00c4ff', short:'BANCO CH.'},
+  "Perry's Stage":       { color:'#b84fff', short:"PERRY'S"  },
+  'Cupula':              { color:'#ff9500', short:'CÚPULA'   },
+  'Lotus Stage':         { color:'#00e57b', short:'LOTUS'    },
+};
+const DAY_NAMES  = ['Viernes 13','Sábado 14','Domingo 15'];
+const DAY_LABELS = ['Viernes 13 de Marzo','Sábado 14 de Marzo','Domingo 15 de Marzo'];
+
+// Schedule data
+const SCH = [
+  [ // VIERNES 13
+    {n:'Benja Valencia',      s:'Cenco Malls Stage',    st:'14:00',en:'14:45'},
+    {n:'Bad Nerves',          s:'Cenco Malls Stage',    st:'15:15',en:'16:00'},
+    {n:'LANY',                s:'Cenco Malls Stage',    st:'16:00',en:'17:00'},
+    {n:'Interpol',            s:'Cenco Malls Stage',    st:'19:00',en:'20:00',h:1},
+    {n:'Doechii',             s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
+    {n:'Deftones',            s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
+    {n:'Sabrina Carpenter',   s:'Cenco Malls Stage',    st:'22:15',en:'23:35',h:1},
+    {n:'Dracma',              s:'Banco de Chile Stage', st:'13:45',en:'14:30'},
+    {n:'The Warning',         s:'Banco de Chile Stage', st:'14:30',en:'15:15'},
+    {n:'Gepe',                s:'Banco de Chile Stage', st:'16:00',en:'17:00'},
+    {n:'Airbag',              s:'Banco de Chile Stage', st:'17:00',en:'18:00'},
+    {n:'Viagra Boys',         s:'Banco de Chile Stage', st:'18:00',en:'19:00'},
+    {n:'HorsegiirL',          s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
+    {n:'Men I Trust',         s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
+    {n:'Tom Morello',         s:'Banco de Chile Stage', st:'22:30',en:'23:30',h:1},
+    {n:'Young Cister',        s:'Banco de Chile Stage', st:'23:35',en:'00:50',h:1},
+    {n:'Gondwana',            s:'Banco de Chile Stage', st:'22:45',en:'23:45'},
+    {n:'Cleaver',             s:"Perry's Stage",        st:'14:15',en:'15:00'},
+    {n:'Saske',               s:"Perry's Stage",        st:'16:00',en:'16:45'},
+    {n:'3BallMTY',            s:"Perry's Stage",        st:'17:00',en:'17:45'},
+    {n:'Six Sex',             s:"Perry's Stage",        st:'18:00',en:'18:45'},
+    {n:'BUNT.',               s:"Perry's Stage",        st:'20:15',en:'21:15'},
+    {n:'Ben Böhmer',          s:"Perry's Stage",        st:'21:30',en:'22:45',h:1},
+    {n:'Kygo',                s:"Perry's Stage",        st:'23:15',en:'00:30',h:1},
+    {n:'Bryartz',             s:'Cupula',               st:'15:00',en:'15:45'},
+    {n:'Los Machinga',        s:'Cupula',               st:'15:30',en:'16:00'},
+    {n:'Consequence of Energy',s:'Cupula',              st:'16:15',en:'17:00'},
+    {n:'Despertando las Neuronas',s:'Cupula',           st:'16:45',en:'17:30'},
+    {n:'Drink the Sea',       s:'Cupula',               st:'18:00',en:'18:45'},
+    {n:'Amigo de Artistas',   s:'Cupula',               st:'19:30',en:'20:15'},
+    {n:'The La Planta',       s:'Cupula',               st:'21:00',en:'21:45'},
+    {n:'31 Minutos',          s:'Lotus Stage',          st:'18:30',en:'19:50'},
+  ],
+  [ // SÁBADO 14
+    {n:'Zaturno',             s:'Cenco Malls Stage',    st:'14:45',en:'15:30'},
+    {n:'Royel Otis',          s:'Cenco Malls Stage',    st:'17:00',en:'18:00'},
+    {n:'Katseye',             s:'Cenco Malls Stage',    st:'19:00',en:'20:00'},
+    {n:'Turnstile',           s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
+    {n:'Lorde',               s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
+    {n:'Tyler, The Creator',  s:'Cenco Malls Stage',    st:'22:15',en:'23:30',h:1},
+    {n:'Fonosida',            s:'Banco de Chile Stage', st:'14:00',en:'14:30'},
+    {n:'Bruno Borlone',       s:'Banco de Chile Stage', st:'14:30',en:'15:15'},
+    {n:'Yami Safdie',         s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
+    {n:'Chicarica',           s:'Banco de Chile Stage', st:'16:45',en:'17:30'},
+    {n:'Judeline',            s:'Banco de Chile Stage', st:'18:00',en:'18:45'},
+    {n:'Guitarricadelafuente',s:'Banco de Chile Stage', st:'18:15',en:'19:00'},
+    {n:'Rubio',               s:'Banco de Chile Stage', st:'19:45',en:'20:45'},
+    {n:'Balu Brigada',        s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
+    {n:'Orishas',             s:'Banco de Chile Stage', st:'22:30',en:'23:45'},
+    {n:'Los Bunkers',         s:'Banco de Chile Stage', st:'23:30',en:'01:00',h:1},
+    {n:'Marlon Breeze',       s:"Perry's Stage",        st:'15:30',en:'16:15'},
+    {n:'Aura Bae',            s:"Perry's Stage",        st:'16:30',en:'17:30'},
+    {n:'AERÓBICA',            s:"Perry's Stage",        st:'18:45',en:'19:45'},
+    {n:'ROZ',                 s:"Perry's Stage",        st:'20:00',en:'21:00'},
+    {n:'¥ōsūke Yuk1mat$u',   s:"Perry's Stage",        st:'21:15',en:'22:30',h:1},
+    {n:'Tomo Como Rey',       s:"Perry's Stage",        st:'21:30',en:'22:30'},
+    {n:'Peggy Gou',           s:"Perry's Stage",        st:'23:00',en:'00:30',h:1},
+    {n:'Astronautiko',        s:'Cupula',               st:'14:00',en:'14:45'},
+    {n:'Como Asesinar a Felipes',s:'Cupula',            st:'15:15',en:'16:00'},
+    {n:'School of Rock',      s:'Cupula',               st:'15:30',en:'16:15'},
+    {n:'Candelabro',          s:'Cupula',               st:'16:15',en:'17:00'},
+    {n:'Wassa Wassa',         s:'Cupula',               st:'17:00',en:'17:45'},
+    {n:'Katteyes',            s:'Cupula',               st:'17:45',en:'18:30'},
+    {n:'Mano de Obra',        s:'Lotus Stage',          st:'14:45',en:'15:30'},
+    {n:'De Saloon',           s:'Lotus Stage',          st:'16:15',en:'17:00'},
+    {n:'Djo',                 s:'Lotus Stage',          st:'18:00',en:'19:00',h:1},
+    {n:'31 Minutos',          s:'Lotus Stage',          st:'18:30',en:'19:50'},
+  ],
+  [ // DOMINGO 15
+    {n:'Santo Barrio',        s:'Cenco Malls Stage',    st:'14:00',en:'14:45'},
+    {n:'Bandalos Chinos',     s:'Cenco Malls Stage',    st:'16:15',en:'17:00'},
+    {n:'Marina',              s:'Cenco Malls Stage',    st:'18:00',en:'19:00',h:1},
+    {n:'Addison Rae',         s:'Cenco Malls Stage',    st:'19:00',en:'20:00'},
+    {n:'Lewis Capaldi',       s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
+    {n:'Skrillex',            s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
+    {n:'RIIZE',               s:'Cenco Malls Stage',    st:'22:15',en:'23:15'},
+    {n:'Chappell Roan',       s:'Cenco Malls Stage',    st:'22:30',en:'00:00',h:1},
+    {n:'Los Borne',           s:'Banco de Chile Stage', st:'13:30',en:'14:00'},
+    {n:'Hesse Kassel',        s:'Banco de Chile Stage', st:'13:45',en:'14:15'},
+    {n:'Miss Javi',           s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
+    {n:'Joaquina',            s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
+    {n:'Caleb Calloway',      s:'Banco de Chile Stage', st:'16:00',en:'16:45'},
+    {n:'Danny Ocean',         s:'Banco de Chile Stage', st:'17:00',en:'18:00',h:1},
+    {n:'TV Girl',             s:'Banco de Chile Stage', st:'18:00',en:'19:00'},
+    {n:'Mau & Ricky',         s:'Banco de Chile Stage', st:'19:30',en:'20:30'},
+    {n:'2 Minutos',           s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
+    {n:'Quilapayún',          s:'Banco de Chile Stage', st:'21:15',en:'22:15',h:1},
+    {n:'HAMDI',               s:"Perry's Stage",        st:'17:00',en:'18:00'},
+    {n:'Facebrooklyn',        s:"Perry's Stage",        st:'18:15',en:'19:15'},
+    {n:'2HOLLIS & ROMMULAS',  s:"Perry's Stage",        st:'19:30',en:'20:30'},
+    {n:'Akriila',             s:"Perry's Stage",        st:'20:45',en:'22:00'},
+    {n:'Brutalismus 3000',    s:"Perry's Stage",        st:'22:30',en:'23:45',h:1},
+    {n:'Anttonias',           s:'Cupula',               st:'14:45',en:'15:30'},
+    {n:'Caleuchístico',       s:'Cupula',               st:'15:30',en:'16:15'},
+    {n:'Niebla Niebla',       s:'Cupula',               st:'16:15',en:'17:00'},
+    {n:'Otroarte Música',     s:'Cupula',               st:'17:00',en:'17:45'},
+    {n:'Claudio Valenzuela Trío',s:'Cupula',            st:'17:45',en:'18:45'},
+    {n:'Tikitiklip',          s:'Cupula',               st:'18:30',en:'19:30'},
+    {n:'Cristóbal Briceño y Grupo Crisis',s:'Lotus Stage',st:'14:45',en:'15:30'},
+    {n:'Mauricio Hernández',  s:'Lotus Stage',          st:'15:00',en:'15:45'},
+    {n:'Manuel García',       s:'Lotus Stage',          st:'16:15',en:'17:15'},
+    {n:'La Caravana Mágica',  s:'Lotus Stage',          st:'14:45',en:'15:30'},
+  ],
+];
+
+// Poster tiers — exactly as the official poster
+const POSTER_TIERS = [
+  { // VIERNES
+    0:['Sabrina Carpenter','Deftones','Doechii'],
+    1:['Interpol','Kygo','Tom Morello','Young Cister','Ben Böhmer','BUNT.','Men I Trust',
+       'Viagra Boys','HorsegiirL','LANY','Airbag','Gepe','The Warning','Bad Nerves'],
+    2:['Gondwana','31 Minutos','Six Sex','Drink the Sea','3BallMTY','The La Planta'],
+    3:['Dracma','Bryartz','Amigo de Artistas','Benja Valencia','Cleaver',
+       'Consequence of Energy','Despertando las Neuronas'],
+  },
+  { // SÁBADO
+    0:['Tyler, The Creator','Lorde','Turnstile','Los Bunkers'],
+    1:['Peggy Gou','Katseye','Djo','Orishas','Royel Otis','¥ōsūke Yuk1mat$u',
+       'Balu Brigada','ROZ','Judeline','Yami Safdie','31 Minutos','De Saloon'],
+    2:['Katteyes','Rubio','Guitarricadelafuente','Como Asesinar a Felipes','Zaturno',
+       'Tomo Como Rey','Marlon Breeze','Bruno Borlone','Astronautiko','AERÓBICA'],
+    3:['Chicarica','Fonosida','Mano de Obra','School of Rock','Candelabro','Wassa Wassa'],
+  },
+  { // DOMINGO
+    0:['Chappell Roan','Skrillex','Lewis Capaldi'],
+    1:['Addison Rae','Brutalismus 3000','Danny Ocean','Marina','2HOLLIS & ROMMULAS','Akriila',
+       'TV Girl','RIIZE','HAMDI','Mau & Ricky','Bandalos Chinos','Manuel García','Joaquina'],
+    2:['2 Minutos','Caleb Calloway','Quilapayún','Facebrooklyn','Claudio Valenzuela Trío'],
+    3:['Cristóbal Briceño y Grupo Crisis','Santo Barrio','Anttonias','Mauricio Hernández',
+       'Hesse Kassel','Niebla Niebla','La Caravana Mágica','Miss Javi',
+       'Los Borne','Tikitiklip','Caleuchístico','Otroarte Música'],
+  },
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentDay  = 0;
+let viewMode    = 'poster';
+let sortOrder   = 'desc';
+let stageFilter = 'all';
+let selected    = new Set();  // keys = "dayIndex|artistName"
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+const toMins = t => { let [h,m]=t.split(':').map(Number); if(h<6)h+=24; return h*60+m; };
+const mkKey  = (d,n) => d+'|'+n;
+
+function loadFromHash() {
+  const h = location.hash.slice(1);
+  if (!h) return;
+  try { decodeURIComponent(h).split(',').filter(Boolean).forEach(k=>selected.add(k)); } catch(e){}
+}
+
+function findConflicts() {
+  const arr=[];
+  selected.forEach(k=>{ const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[di]?.find(x=>x.n===n); if(a) arr.push({...a,di:+di,key:k}); });
+  arr.sort((a,b)=>a.di!==b.di?a.di-b.di:toMins(a.st)-toMins(b.st));
+  const out=[], seen=new Set();
+  for(let i=0;i<arr.length;i++) for(let j=i+1;j<arr.length;j++){
+    const a=arr[i],b=arr[j];
+    if(a.di!==b.di||a.s===b.s) continue;
+    if(toMins(a.st)<toMins(b.en)&&toMins(b.st)<toMins(a.en)){
+      const ck=a.key+'_'+b.key; if(!seen.has(ck)){seen.add(ck);out.push([a,b]);}
+    }
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+function setDay(d, btn) {
+  currentDay = d;
+  document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setView(mode) {
+  viewMode = mode;
+  ['poster','cards'].forEach(m=>{
+    document.getElementById('vt-'+m).classList.toggle('active', m===mode);
+  });
+  const showExtra = mode !== 'poster';
+  document.getElementById('sort-btns').style.display = showExtra ? 'flex' : 'none';
+  document.getElementById('stage-filters').style.display = showExtra ? 'flex' : 'none';
+  render();
+}
+
+function setSort(order) {
+  sortOrder = order;
+  document.getElementById('sb-asc').classList.toggle('active', order==='asc');
+  document.getElementById('sb-desc').classList.toggle('active', order==='desc');
+  render();
+}
+
+function setStage(s, btn) {
+  stageFilter = s;
+  document.querySelectorAll('.sf').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// ═══════════════════════════════════════════════
+// TOGGLE ARTIST
+// ═══════════════════════════════════════════════
+function toggle(di, name) {
+  const k = mkKey(di, name);
+  if (selected.has(k)) selected.delete(k);
+  else { selected.add(k); showToast('✓ '+name); }
+  render();
+  renderAgenda();
+}
+
+function clearAll() {
+  selected.clear();
+  render();
+  renderAgenda();
+}
+
+// ═══════════════════════════════════════════════
+// MAIN RENDER DISPATCHER
+// ═══════════════════════════════════════════════
+function render() {
+  if (viewMode==='poster') renderPoster();
+  else renderTimeline();
+}
+
+// ═══════════════════════════════════════════════
+// POSTER VIEW
+// ═══════════════════════════════════════════════
+function renderPoster() {
+  const el = document.getElementById('content');
+  const days = currentDay===3 ? [0,1,2] : [currentDay];
+  const DAY_TAGS = ['VIERNES','SÁBADO','DOMINGO'];
+  const SEPS = ['⚡','·','·','·'];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'poster-wrap';
+
+  days.forEach(di => {
+    const block = document.createElement('div');
+    block.className = 'poster-day-block';
+
+    // Divider
+    block.innerHTML = `
+      <div class="poster-divider">
+        <div class="poster-divider-rule"><span></span><span></span></div>
+        <div class="poster-divider-tag">${DAY_TAGS[di]}</div>
+        <div class="poster-divider-rule"><span></span><span></span></div>
+      </div>`;
+
+    // Tiers
+    [0,1,2,3].forEach(t => {
+      const names = POSTER_TIERS[di][t] || [];
+      if (!names.length) return;
+
+      const row = document.createElement('div');
+      row.className = 'poster-row';
+
+      names.forEach((name, i) => {
+        const art = SCH[di].find(a => a.n===name || a.n.toLowerCase()===name.toLowerCase());
+        const key = mkKey(di, art ? art.n : name);
+        const isSel = selected.has(key);
+
+        const span = document.createElement('span');
+        span.className = `pn t${t}${isSel?' sel':''}`;
+        span.textContent = name.toUpperCase();
+        if (art) span.title = `${art.st}–${art.en} · ${SM[art.s]?.short||art.s}`;
+        span.onclick = () => toggle(di, art ? art.n : name);
+        row.appendChild(span);
+
+        if (i < names.length-1) {
+          const sep = document.createElement('span');
+          sep.className = `psep t${t}`;
+          sep.textContent = ` ${SEPS[t]} `;
+          row.appendChild(sep);
+        }
+      });
+
+      block.appendChild(row);
+    });
+
+    wrap.appendChild(block);
+  });
+
+  el.innerHTML = '';
+  el.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════
+// CHIPS / CARDS VIEW
+// ═══════════════════════════════════════════════
+function renderTimeline() {
+  const el = document.getElementById('content');
+  const days = currentDay===3 ? [0,1,2] : [currentDay];
+
+  let artists = [];
+  days.forEach(di => {
+    const day = SCH[di] || [];
+    const filtered = stageFilter==='all' ? day : day.filter(a=>a.s===stageFilter);
+    filtered.forEach(a => artists.push({...a, di}));
+  });
+
+  // Bucket by 30-min slots
+  const buckets = {};
+  artists.forEach(a => {
+    const b = Math.floor(toMins(a.st)/30)*30;
+    if (!buckets[b]) buckets[b]=[];
+    buckets[b].push(a);
+  });
+  const bKeys = Object.keys(buckets).sort((a,b) => sortOrder==='asc' ? +a-+b : +b-+a);
+
+  el.innerHTML = '';
+
+  if (viewMode==='chips') {
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    bKeys.forEach(bk => {
+      const h=Math.floor(+bk/60)%24, m=+bk%60;
+      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const row = document.createElement('div');
+      row.className = 'chip-bucket';
+      const chips = buckets[bk].map(a => {
+        const key=mkKey(a.di,a.n), isSel=selected.has(key);
+        return `<div class="chip${isSel?' sel':''}" data-s="${a.s}"
+            title="${a.st}–${a.en} · ${SM[a.s]?.short}"
+            onclick="toggle(${a.di},${JSON.stringify(a.n)})">
+          ${a.n}${a.h?' ★':''}
+          <span class="chip-ck">✓</span>
+        </div>`;
+      }).join('');
+      row.innerHTML = `<div class="chip-time">${lbl}</div><div class="chip-row">${chips}</div>`;
+      wrap.appendChild(row);
+    });
+    el.appendChild(wrap);
+
+  } else { // cards
+    const wrap = document.createElement('div');
+    wrap.className = 'cards-wrap';
+    bKeys.forEach(bk => {
+      const h=Math.floor(+bk/60)%24, m=+bk%60;
+      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const bucket = document.createElement('div');
+      bucket.className = 'time-bucket';
+      const cards = buckets[bk].map(a => {
+        const key=mkKey(a.di,a.n), isSel=selected.has(key);
+        return `<div class="artist-card${isSel?' sel':''}" data-s="${a.s}"
+            onclick="toggle(${a.di},${JSON.stringify(a.n)})">
+          <div>
+            <div class="card-name">${a.n}${a.h?` <span class="hbadge">HEADLINER</span>`:''}</div>
+            <div class="card-meta">
+              <span class="card-time">🕐 ${a.st}–${a.en}</span>
+              <span class="sdot" data-s="${a.s}">${SM[a.s]?.short||a.s}</span>
+              ${currentDay===3?`<span style="font-size:10px;color:var(--muted)">${DAY_NAMES[a.di]}</span>`:''}
+            </div>
+          </div>
+          <span class="check">✓</span>
+        </div>`;
+      }).join('');
+      bucket.innerHTML = `<div class="time-lbl">${lbl}</div><div class="time-artists">${cards}</div>`;
+      wrap.appendChild(bucket);
+    });
+    el.appendChild(wrap);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// AGENDA PANEL
+// ═══════════════════════════════════════════════
+function renderAgenda() {
+  const all = [];
+  selected.forEach(k=>{ const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[di]?.find(x=>x.n===n); if(a) all.push({...a,di:+di,key:k}); });
+  all.sort((a,b)=>a.di!==b.di?a.di-b.di:toMins(a.st)-toMins(b.st));
+  document.getElementById('count-badge').textContent=`${all.length} show${all.length!==1?'s':''}`;
+
+  const conflicts = findConflicts();
+  const cKeys = new Set(conflicts.flatMap(([a,b])=>[a.key,b.key]));
+
+  // Conflicts
+  document.getElementById('conflicts').innerHTML = conflicts.length
+    ? `<div class="conflict-box">
+        <div class="conflict-ttl">⚠️ ${conflicts.length} CHOQUE${conflicts.length>1?'S':''} DE HORARIO</div>
+        ${conflicts.map(([a,b])=>`<div class="conflict-row"><b>${a.n}</b> (${a.st}) ↔ <b>${b.n}</b> (${b.st}) · ${DAY_NAMES[a.di]}</div>`).join('')}
+       </div>` : '';
+
+  // List
+  const listEl = document.getElementById('agenda-list');
+  if (!all.length) {
+    listEl.innerHTML = '<div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>';
+    document.getElementById('share-url').textContent = 'Selecciona artistas para generar tu link…';
+    updateHash(); return;
+  }
+  const byDay={0:[],1:[],2:[]};
+  all.forEach(a=>byDay[a.di].push(a));
+  listEl.innerHTML = [0,1,2].map(d=>{
+    if(!byDay[d].length) return '';
+    return `<div>
+      <div class="agenda-day-ttl">${DAY_NAMES[d]}</div>
+      ${byDay[d].map(a=>`
+        <div class="agenda-item${cKeys.has(a.key)?' has-conflict':''}">
+          <div class="a-strip" data-s="${a.s}"></div>
+          <div class="a-info">
+            <div class="a-name">${a.n}${cKeys.has(a.key)?' ⚠️':''}</div>
+            <div class="a-detail">${a.st}–${a.en} · ${SM[a.s]?.short}</div>
+          </div>
+          <button class="a-rm" onclick="removeKey('${a.key}')">×</button>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+  updateHash();
+}
+
+function removeKey(k) {
+  selected.delete(k);
+  render(); renderAgenda();
+}
+
+function updateHash() {
+  const keys=[...selected].join(',');
+  const url=location.href.split('#')[0]+(keys?'#'+encodeURIComponent(keys):'');
+  document.getElementById('share-url').textContent=keys?url:'Selecciona artistas para generar tu link…';
+  history.replaceState(null,'',url);
+}
+
+// ═══════════════════════════════════════════════
+// SHARE / COMPARE
+// ═══════════════════════════════════════════════
+function copyLink() {
+  const url=document.getElementById('share-url').textContent;
+  if(url.startsWith('Selecciona')){showToast('Primero selecciona artistas');return;}
+  navigator.clipboard.writeText(url).then(()=>showToast('✓ Link copiado'));
+}
+function shareWA() {
+  const url=document.getElementById('share-url').textContent;
+  if(url.startsWith('Selecciona')){showToast('Primero selecciona artistas');return;}
+  window.open(`https://wa.me/?text=${encodeURIComponent('🎸 Lollapalooza Chile 2026 — Mi agenda ('+selected.size+' shows):\n'+url)}`,'_blank');
+}
+function doCompare() {
+  const input=document.getElementById('friend-url').value.trim();
+  const res=document.getElementById('compare-result');
+  if(!input){res.innerHTML='<p style="font-size:11px;color:#888">Pega un link primero.</p>';return;}
+  let fKeys;
+  try { const h=input.includes('#')?input.split('#')[1]:input; fKeys=new Set(decodeURIComponent(h).split(',').filter(Boolean)); }
+  catch(e){res.innerHTML='<p style="font-size:11px;color:#f88">Link inválido.</p>';return;}
+  const lbl=k=>{const[di,...p]=k.split('|');return p.join('|')+' · '+(DAY_NAMES[+di]||'?');};
+  const common=[...selected].filter(k=>fKeys.has(k));
+  const onlyF=[...fKeys].filter(k=>!selected.has(k));
+  res.innerHTML=`
+    ${common.length?`<div style="font-size:11px;font-weight:700;color:var(--lotus);margin-bottom:5px">✅ Coinciden (${common.length}):</div>${common.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')}`:'<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Sin artistas en común.</div>'}
+    ${onlyF.length?`<div style="font-size:11px;font-weight:700;color:var(--banco);margin:7px 0 4px">Solo tu amigo/a (${onlyF.length}):</div>${onlyF.map(k=>`<div class="c-only">${lbl(k)}</div>`).join('')}`:''}`;
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+let toastTmr;
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTmr); toastTmr=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadFromHash();
+render();
+renderAgenda();
+</script>
+</body>
+</html>
