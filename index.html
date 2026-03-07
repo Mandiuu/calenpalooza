@@ -149,9 +149,31 @@ header {
 .psep.t2 { font-size: clamp(11px,2.8vw,17px); margin: 0 3px; opacity: 0.4; }
 .psep.t3 { font-size: clamp(11px,2.8vw,17px); margin: 0 3px; opacity: 0.35; }
 
-/* ─────────────────────────────────────
-   CARDS VIEW
-───────────────────────────────────── */
+/* Friend picks — cyan */
+.pn.friend { background: #2eccc430; color: #000 !important; padding: 0 5px; border-radius: 3px; }
+.pn.match  { background: #00e57b !important; color: #000 !important; padding: 0 5px; border-radius: 3px; }
+.artist-card.friend { border-color: var(--banco) !important; background:#001f2a; }
+.artist-card.match  { border-color: var(--lotus) !important; background:#001f12; }
+.artist-card.friend .check { color: var(--banco); }
+.artist-card.match  .check { color: var(--lotus); }
+
+/* Friend mode banner */
+.friend-banner {
+  background: linear-gradient(135deg, #00c4ff18, #00c4ff08);
+  border: 1px solid #00c4ff40;
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: var(--banco);
+  margin-bottom: 4px; line-height: 1.5;
+}
+.friend-banner strong { display:block; font-size:13px; margin-bottom:2px; }
+
+/* Comparison section */
+.compare-live { border-radius:12px; overflow:hidden; }
+.compare-section-ttl { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 12px 4px; }
+.c-match  { font-size:11px; padding:6px 10px; margin-bottom:2px; border-radius:7px; background:#00e57b14; color:var(--lotus); border:1px solid #00e57b28; }
+.c-mine   { font-size:11px; padding:6px 10px; margin-bottom:2px; border-radius:7px; background:#ffe60014; color:#c8b800; border:1px solid #ffe60030; }
+.c-friend { font-size:11px; padding:6px 10px; margin-bottom:2px; border-radius:7px; background:#00c4ff12; color:var(--banco); border:1px solid #00c4ff28; }
+.c-only   { font-size:11px; padding:5px 9px; border-radius:6px; margin-bottom:3px; background:var(--card); color:var(--muted); border:1px solid var(--border); }
 .cards-wrap { display:flex; flex-direction:column; gap:4px; }
 .time-bucket { display:flex; align-items:flex-start; gap:0; }
 .time-lbl { width:52px; min-width:52px; font-size:11px; color:var(--muted); padding-top:13px; text-align:right; padding-right:12px; font-weight:500; flex-shrink:0; }
@@ -355,7 +377,8 @@ header {
     <div id="agenda-list">
       <div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>
     </div>
-    <div class="share-box">
+    <div id="compare-live-section" style="display:none"></div>
+    <div class="share-box" id="share-box">
       <div class="share-ttl">📤 Comparte con amigos</div>
       <div class="share-url" id="share-url">Selecciona artistas para generar tu link…</div>
       <div class="share-btns">
@@ -363,7 +386,7 @@ header {
         <button class="btn" onclick="shareWA()">💬 WhatsApp</button>
       </div>
     </div>
-    <div class="compare-box">
+    <div class="compare-box" id="compare-box">
       <div class="compare-ttl">👥 Comparar con amigo/a</div>
       <input class="compare-input" id="friend-url" placeholder="Pega el link de tu amigo/a…">
       <button class="btn" style="width:100%;margin-bottom:8px" onclick="doCompare()">Ver coincidencias</button>
@@ -532,7 +555,9 @@ let currentDay  = 0;
 let viewMode    = 'poster';
 let sortOrder   = 'desc';
 let stageFilter = 'all';
-let selected    = new Set();  // keys = "dayIndex|artistName"
+let selected    = new Set();  // my picks
+let friendKeys  = new Set();  // friend's picks (loaded from shared URL)
+let isFriendMode = false;
 
 // ═══════════════════════════════════════════════
 // UTILS
@@ -541,9 +566,20 @@ const toMins = t => { let [h,m]=t.split(':').map(Number); if(h<6)h+=24; return h
 const mkKey  = (d,n) => d+'|'+n;
 
 function loadFromHash() {
-  const h = location.hash.slice(1);
-  if (!h) return;
-  try { decodeURIComponent(h).split(',').filter(Boolean).forEach(k=>selected.add(k)); } catch(e){}
+  const raw = location.hash.slice(1);
+  if (!raw) return;
+  try {
+    const decoded = decodeURIComponent(raw);
+    // Format: "f:KEY1,KEY2" = friend mode  |  "KEY1,KEY2" = own picks (legacy)
+    if (decoded.startsWith('f:')) {
+      isFriendMode = true;
+      const parts = decoded.slice(2).split(';;m:');
+      parts[0].split(',').filter(Boolean).forEach(k => friendKeys.add(k));
+      if (parts[1]) parts[1].split(',').filter(Boolean).forEach(k => selected.add(k));
+    } else {
+      decoded.split(',').filter(Boolean).forEach(k => selected.add(k));
+    }
+  } catch(e){}
 }
 
 function findConflicts() {
@@ -637,7 +673,6 @@ function renderPoster() {
     const block = document.createElement('div');
     block.className = 'poster-day-block';
 
-    // Divider
     block.innerHTML = `
       <div class="poster-divider">
         <div class="poster-divider-rule"><span></span><span></span></div>
@@ -645,7 +680,6 @@ function renderPoster() {
         <div class="poster-divider-rule"><span></span><span></span></div>
       </div>`;
 
-    // Tiers
     [0,1,2,3].forEach(t => {
       const names = POSTER_TIERS[di][t] || [];
       if (!names.length) return;
@@ -656,10 +690,16 @@ function renderPoster() {
       names.forEach((name, i) => {
         const art = SCH[di].find(a => a.n===name || a.n.toLowerCase()===name.toLowerCase());
         const key = mkKey(di, art ? art.n : name);
-        const isSel = selected.has(key);
+        const isMine   = selected.has(key);
+        const isFriend = friendKeys.has(key);
+        const isMatch  = isMine && isFriend;
 
         const span = document.createElement('span');
-        span.className = `pn t${t}${isSel?' sel':''}`;
+        let cls = `pn t${t}`;
+        if (isMatch)       cls += ' match';
+        else if (isMine)   cls += ' sel';
+        else if (isFriend) cls += ' friend';
+        span.className = cls;
         span.textContent = name.toUpperCase();
         if (art) span.title = `${art.st}–${art.en} · ${SM[art.s]?.short||art.s}`;
         span.onclick = () => toggle(di, art ? art.n : name);
@@ -684,7 +724,7 @@ function renderPoster() {
 }
 
 // ═══════════════════════════════════════════════
-// CHIPS / CARDS VIEW
+// CARDS VIEW
 // ═══════════════════════════════════════════════
 function renderTimeline() {
   const el = document.getElementById('content');
@@ -697,7 +737,6 @@ function renderTimeline() {
     filtered.forEach(a => artists.push({...a, di}));
   });
 
-  // Bucket by 30-min slots
   const buckets = {};
   artists.forEach(a => {
     const b = Math.floor(toMins(a.st)/30)*30;
@@ -707,63 +746,43 @@ function renderTimeline() {
   const bKeys = Object.keys(buckets).sort((a,b) => sortOrder==='asc' ? +a-+b : +b-+a);
 
   el.innerHTML = '';
-
-  if (viewMode==='chips') {
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
-    bKeys.forEach(bk => {
-      const h=Math.floor(+bk/60)%24, m=+bk%60;
-      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      const row = document.createElement('div');
-      row.className = 'chip-bucket';
-      const chips = buckets[bk].map(a => {
-        const key=mkKey(a.di,a.n), isSel=selected.has(key);
-        return `<div class="chip${isSel?' sel':''}" data-s="${a.s}"
-            title="${a.st}–${a.en} · ${SM[a.s]?.short}"
-            onclick="toggle(${a.di},${JSON.stringify(a.n)})">
-          ${a.n}${a.h?' ★':''}
-          <span class="chip-ck">✓</span>
-        </div>`;
-      }).join('');
-      row.innerHTML = `<div class="chip-time">${lbl}</div><div class="chip-row">${chips}</div>`;
-      wrap.appendChild(row);
-    });
-    el.appendChild(wrap);
-
-  } else { // cards
-    const wrap = document.createElement('div');
-    wrap.className = 'cards-wrap';
-    bKeys.forEach(bk => {
-      const h=Math.floor(+bk/60)%24, m=+bk%60;
-      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      const bucket = document.createElement('div');
-      bucket.className = 'time-bucket';
-      const cards = buckets[bk].map(a => {
-        const key=mkKey(a.di,a.n), isSel=selected.has(key);
-        return `<div class="artist-card${isSel?' sel':''}" data-s="${a.s}"
-            onclick="toggle(${a.di},${JSON.stringify(a.n)})">
-          <div>
-            <div class="card-name">${a.n}${a.h?` <span class="hbadge">HEADLINER</span>`:''}</div>
-            <div class="card-meta">
-              <span class="card-time">🕐 ${a.st}–${a.en}</span>
-              <span class="sdot" data-s="${a.s}">${SM[a.s]?.short||a.s}</span>
-              ${currentDay===3?`<span style="font-size:10px;color:var(--muted)">${DAY_NAMES[a.di]}</span>`:''}
-            </div>
+  const wrap = document.createElement('div');
+  wrap.className = 'cards-wrap';
+  bKeys.forEach(bk => {
+    const h=Math.floor(+bk/60)%24, m=+bk%60;
+    const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    const bucket = document.createElement('div');
+    bucket.className = 'time-bucket';
+    const cards = buckets[bk].map(a => {
+      const key=mkKey(a.di,a.n);
+      const isMine=selected.has(key), isFriend=friendKeys.has(key), isMatch=isMine&&isFriend;
+      let cls = 'artist-card';
+      if (isMatch) cls+=' match sel'; else if (isMine) cls+=' sel'; else if (isFriend) cls+=' friend';
+      const checkColor = isMatch ? 'var(--lotus)' : isFriend ? 'var(--banco)' : 'var(--neon)';
+      return `<div class="${cls}" data-s="${a.s}" onclick="toggle(${a.di},${JSON.stringify(a.n)})">
+        <div>
+          <div class="card-name">${a.n}${a.h?` <span class="hbadge">HEADLINER</span>`:''}</div>
+          <div class="card-meta">
+            <span class="card-time">🕐 ${a.st}–${a.en}</span>
+            <span class="sdot" data-s="${a.s}">${SM[a.s]?.short||a.s}</span>
+            ${currentDay===3?`<span style="font-size:10px;color:var(--muted)">${DAY_NAMES[a.di]}</span>`:''}
+            ${isFriend&&!isMine?`<span style="font-size:10px;color:var(--banco)">👤 amigo/a</span>`:''}
           </div>
-          <span class="check">✓</span>
-        </div>`;
-      }).join('');
-      bucket.innerHTML = `<div class="time-lbl">${lbl}</div><div class="time-artists">${cards}</div>`;
-      wrap.appendChild(bucket);
-    });
-    el.appendChild(wrap);
-  }
+        </div>
+        <span class="check" style="color:${checkColor}">${isMatch?'💚':isFriend?'👤':'✓'}</span>
+      </div>`;
+    }).join('');
+    bucket.innerHTML = `<div class="time-lbl">${lbl}</div><div class="time-artists">${cards}</div>`;
+    wrap.appendChild(bucket);
+  });
+  el.appendChild(wrap);
 }
 
 // ═══════════════════════════════════════════════
 // AGENDA PANEL
 // ═══════════════════════════════════════════════
 function renderAgenda() {
+  // My picks list
   const all = [];
   selected.forEach(k=>{ const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[di]?.find(x=>x.n===n); if(a) all.push({...a,di:+di,key:k}); });
   all.sort((a,b)=>a.di!==b.di?a.di-b.di:toMins(a.st)-toMins(b.st));
@@ -772,17 +791,50 @@ function renderAgenda() {
   const conflicts = findConflicts();
   const cKeys = new Set(conflicts.flatMap(([a,b])=>[a.key,b.key]));
 
-  // Conflicts
   document.getElementById('conflicts').innerHTML = conflicts.length
     ? `<div class="conflict-box">
         <div class="conflict-ttl">⚠️ ${conflicts.length} CHOQUE${conflicts.length>1?'S':''} DE HORARIO</div>
         ${conflicts.map(([a,b])=>`<div class="conflict-row"><b>${a.n}</b> (${a.st}) ↔ <b>${b.n}</b> (${b.st}) · ${DAY_NAMES[a.di]}</div>`).join('')}
        </div>` : '';
 
-  // List
+  // Friend mode: show banner + live comparison instead of manual compare box
+  if (isFriendMode) {
+    document.getElementById('compare-box').style.display = 'none';
+
+    const matches   = [...selected].filter(k=>friendKeys.has(k));
+    const onlyMine  = [...selected].filter(k=>!friendKeys.has(k));
+    const onlyFriend= [...friendKeys].filter(k=>!selected.has(k));
+    const lbl = k => { const[di,...p]=k.split('|'); const n=p.join('|'); const a=SCH[+di]?.find(x=>x.n===n); return `${n} · ${a?a.st+' ':''}${DAY_NAMES[+di]||''}` };
+
+    const liveEl = document.getElementById('compare-live-section');
+    liveEl.style.display = 'block';
+    liveEl.innerHTML = `
+      <div class="friend-banner">
+        <strong>👤 Modo comparación</strong>
+        Ves en <span style="color:var(--banco)">celeste</span> los shows de tu amigo/a.<br>
+        Selecciona los tuyos en <span style="color:var(--neon)">amarillo</span>.
+      </div>
+      <div style="background:var(--surface);border-radius:12px;padding:12px;margin-top:4px">
+        ${matches.length ? `
+          <div class="compare-section-ttl" style="color:var(--lotus)">✅ COINCIDENCIAS (${matches.length})</div>
+          ${matches.map(k=>`<div class="c-match">${lbl(k)}</div>`).join('')}
+        ` : `<div style="font-size:11px;color:var(--muted);padding:4px 0">Aún sin coincidencias — sigue eligiendo.</div>`}
+        ${onlyMine.length ? `
+          <div class="compare-section-ttl" style="color:var(--neon);margin-top:8px">🟡 SOLO TÚ (${onlyMine.length})</div>
+          ${onlyMine.map(k=>`<div class="c-mine">${lbl(k)}</div>`).join('')}
+        ` : ''}
+        ${onlyFriend.length ? `
+          <div class="compare-section-ttl" style="color:var(--banco);margin-top:8px">🔵 SOLO TU AMIGO/A (${onlyFriend.length})</div>
+          ${onlyFriend.map(k=>`<div class="c-friend">${lbl(k)}</div>`).join('')}
+        ` : ''}
+      </div>`;
+  }
+
   const listEl = document.getElementById('agenda-list');
   if (!all.length) {
-    listEl.innerHTML = '<div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>';
+    listEl.innerHTML = isFriendMode
+      ? '<div class="empty-agenda">Toca los artistas<br>que quieres ver 👆</div>'
+      : '<div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>';
     document.getElementById('share-url').textContent = 'Selecciona artistas para generar tu link…';
     updateHash(); return;
   }
@@ -796,7 +848,7 @@ function renderAgenda() {
         <div class="agenda-item${cKeys.has(a.key)?' has-conflict':''}">
           <div class="a-strip" data-s="${a.s}"></div>
           <div class="a-info">
-            <div class="a-name">${a.n}${cKeys.has(a.key)?' ⚠️':''}</div>
+            <div class="a-name">${a.n}${cKeys.has(a.key)?' ⚠️':''}${friendKeys.has(a.key)?' 💚':''}</div>
             <div class="a-detail">${a.st}–${a.en} · ${SM[a.s]?.short}</div>
           </div>
           <button class="a-rm" onclick="removeKey('${a.key}')">×</button>
@@ -812,10 +864,22 @@ function removeKey(k) {
 }
 
 function updateHash() {
-  const keys=[...selected].join(',');
-  const url=location.href.split('#')[0]+(keys?'#'+encodeURIComponent(keys):'');
-  document.getElementById('share-url').textContent=keys?url:'Selecciona artistas para generar tu link…';
-  history.replaceState(null,'',url);
+  const myKeys  = [...selected].join(',');
+  const fkStr   = [...friendKeys].join(',');
+  let hash = '';
+  if (isFriendMode && fkStr) {
+    hash = 'f:'+fkStr + (myKeys ? ';;m:'+myKeys : '');
+  } else if (myKeys) {
+    hash = myKeys;
+  }
+  const url = location.href.split('#')[0] + (hash ? '#'+encodeURIComponent(hash) : '');
+  // Share URL always encodes as friend-shareable link (f: prefix)
+  const shareHash = isFriendMode
+    ? (myKeys ? 'f:'+myKeys+';;m:'+'' : '') // share my picks as friend keys for next person
+    : (myKeys ? 'f:'+myKeys : '');
+  const shareUrl = location.href.split('#')[0] + (shareHash ? '#'+encodeURIComponent(shareHash) : '');
+  document.getElementById('share-url').textContent = myKeys ? shareUrl : 'Selecciona artistas para generar tu link…';
+  history.replaceState(null,'', url);
 }
 
 // ═══════════════════════════════════════════════
@@ -829,15 +893,19 @@ function copyLink() {
 function shareWA() {
   const url=document.getElementById('share-url').textContent;
   if(url.startsWith('Selecciona')){showToast('Primero selecciona artistas');return;}
-  window.open(`https://wa.me/?text=${encodeURIComponent('🎸 Lollapalooza Chile 2026 — Mi agenda ('+selected.size+' shows):\n'+url)}`,'_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent('🎸 Lollapalooza Chile 2026 — ¿a cuáles vamos juntos? ('+selected.size+' shows):\n'+url)}`,'_blank');
 }
 function doCompare() {
   const input=document.getElementById('friend-url').value.trim();
   const res=document.getElementById('compare-result');
   if(!input){res.innerHTML='<p style="font-size:11px;color:#888">Pega un link primero.</p>';return;}
   let fKeys;
-  try { const h=input.includes('#')?input.split('#')[1]:input; fKeys=new Set(decodeURIComponent(h).split(',').filter(Boolean)); }
-  catch(e){res.innerHTML='<p style="font-size:11px;color:#f88">Link inválido.</p>';return;}
+  try {
+    const h=input.includes('#')?input.split('#')[1]:input;
+    const decoded=decodeURIComponent(h);
+    const raw = decoded.startsWith('f:') ? decoded.slice(2).split(';;m:')[0] : decoded;
+    fKeys=new Set(raw.split(',').filter(Boolean));
+  } catch(e){res.innerHTML='<p style="font-size:11px;color:#f88">Link inválido.</p>';return;}
   const lbl=k=>{const[di,...p]=k.split('|');return p.join('|')+' · '+(DAY_NAMES[+di]||'?');};
   const common=[...selected].filter(k=>fKeys.has(k));
   const onlyF=[...fKeys].filter(k=>!selected.has(k));
