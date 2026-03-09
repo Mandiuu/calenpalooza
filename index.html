@@ -15,9 +15,10 @@
   --muted: #888899;
   --cenco: #ff3366;
   --banco: #00c4ff;
+  --alt:   #ff9500;
   --perrys: #b84fff;
-  --cupula: #ff9500;
   --lotus: #00e57b;
+  --kidz:  #f0c040;
   --neon: #ffe600;
   --conflict: #ff4444;
   --pink: #f0b5aa;
@@ -73,9 +74,10 @@ header {
 .sf[data-s="all"].active { background:#eee; }
 .sf[data-s="Cenco Malls Stage"].active { background:var(--cenco); }
 .sf[data-s="Banco de Chile Stage"].active { background:var(--banco); }
+.sf[data-s="Alternative Stage"].active { background:var(--alt); }
 .sf[data-s="Perry's Stage"].active { background:var(--perrys); }
-.sf[data-s="Cupula"].active { background:var(--cupula); }
 .sf[data-s="Lotus Stage"].active { background:var(--lotus); }
+.sf[data-s="Kidzapalooza"].active { background:var(--kidz); }
 
 /* ─────────────────────────────────────
    POSTER VIEW
@@ -182,9 +184,10 @@ header {
 .artist-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
 .artist-card[data-s="Cenco Malls Stage"]::before { background:var(--cenco); }
 .artist-card[data-s="Banco de Chile Stage"]::before { background:var(--banco); }
+.artist-card[data-s="Alternative Stage"]::before { background:var(--alt); }
 .artist-card[data-s="Perry's Stage"]::before { background:var(--perrys); }
-.artist-card[data-s="Cupula"]::before { background:var(--cupula); }
 .artist-card[data-s="Lotus Stage"]::before { background:var(--lotus); }
+.artist-card[data-s="Kidzapalooza"]::before { background:var(--kidz); }
 .artist-card:hover { background:#1a1a30; border-color:#ffffff22; transform:translateX(2px); }
 .artist-card.sel { border-color:var(--neon) !important; background:#1f1d0a; }
 .check { display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--neon); font-weight:700; font-size:14px; }
@@ -193,11 +196,12 @@ header {
 .card-meta { display:flex; align-items:center; gap:7px; margin-top:3px; flex-wrap:wrap; }
 .card-time { font-size:11px; color:var(--muted); }
 .sdot { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
-.sdot[data-s="Cenco Malls Stage"] { background:#ff336620; color:var(--cenco); }
+.sdot[data-s="Cenco Malls Stage"]    { background:#ff336620; color:var(--cenco); }
 .sdot[data-s="Banco de Chile Stage"] { background:#00c4ff20; color:var(--banco); }
-.sdot[data-s="Perry's Stage"] { background:#b84fff20; color:var(--perrys); }
-.sdot[data-s="Cupula"] { background:#ff950020; color:var(--cupula); }
-.sdot[data-s="Lotus Stage"] { background:#00e57b20; color:var(--lotus); }
+.sdot[data-s="Alternative Stage"]    { background:#ff950020; color:var(--alt); }
+.sdot[data-s="Perry's Stage"]        { background:#b84fff20; color:var(--perrys); }
+.sdot[data-s="Lotus Stage"]          { background:#00e57b20; color:var(--lotus); }
+.sdot[data-s="Kidzapalooza"]         { background:#f0c04020; color:var(--kidz); }
 .hbadge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; background:var(--neon); color:#000; letter-spacing:.5px; }
 
 /* ─────────────────────────────────────
@@ -217,11 +221,12 @@ header {
   font-family:'Inter',sans-serif;
 }
 .chip::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
-.chip[data-s="Cenco Malls Stage"]::before { background:var(--cenco); }
+.chip[data-s="Cenco Malls Stage"]::before    { background:var(--cenco); }
 .chip[data-s="Banco de Chile Stage"]::before { background:var(--banco); }
-.chip[data-s="Perry's Stage"]::before { background:var(--perrys); }
-.chip[data-s="Cupula"]::before { background:var(--cupula); }
-.chip[data-s="Lotus Stage"]::before { background:var(--lotus); }
+.chip[data-s="Alternative Stage"]::before    { background:var(--alt); }
+.chip[data-s="Perry's Stage"]::before        { background:var(--perrys); }
+.chip[data-s="Lotus Stage"]::before          { background:var(--lotus); }
+.chip[data-s="Kidzapalooza"]::before         { background:var(--kidz); }
 .chip:hover { background:#1e1e38; transform:scale(1.04); }
 .chip.sel { border-color:var(--neon) !important; background:#1f1d0a; color:var(--neon); }
 .chip-ck { display:none; font-size:9px; }
@@ -242,11 +247,12 @@ header {
 .agenda-item { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; background:var(--card); margin-bottom:3px; border:1px solid var(--border); }
 .agenda-item.has-conflict { border-color:#ff444430; background:#ff44440a; }
 .a-strip { width:3px; height:34px; border-radius:2px; flex-shrink:0; }
-.a-strip[data-s="Cenco Malls Stage"] { background:var(--cenco); }
+.a-strip[data-s="Cenco Malls Stage"]    { background:var(--cenco); }
 .a-strip[data-s="Banco de Chile Stage"] { background:var(--banco); }
-.a-strip[data-s="Perry's Stage"] { background:var(--perrys); }
-.a-strip[data-s="Cupula"] { background:var(--cupula); }
-.a-strip[data-s="Lotus Stage"] { background:var(--lotus); }
+.a-strip[data-s="Alternative Stage"]    { background:var(--alt); }
+.a-strip[data-s="Perry's Stage"]        { background:var(--perrys); }
+.a-strip[data-s="Lotus Stage"]          { background:var(--lotus); }
+.a-strip[data-s="Kidzapalooza"]         { background:var(--kidz); }
 .a-info { flex:1; min-width:0; }
 .a-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .a-detail { font-size:10px; color:var(--muted); margin-top:2px; }
@@ -340,6 +346,25 @@ header {
 
   <!-- LEFT -->
   <div class="left-panel">
+
+    <!-- How to -->
+    <div style="background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid var(--border);margin-bottom:16px">
+      <div style="display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12px;line-height:1.5;color:#aaa">
+        <div style="display:flex;gap:8px;align-items:flex-start;min-width:160px;flex:1">
+          <span style="flex-shrink:0">👆</span>
+          <div><b style="color:#ddd">Toca un artista</b> para agregarlo a tu agenda.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;min-width:160px;flex:1">
+          <span style="flex-shrink:0">📤</span>
+          <div><b style="color:#ddd">Comparte tu link</b> — tu amigo/a elige los suyos encima.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;min-width:160px;flex:1">
+          <span style="flex-shrink:0">💚</span>
+          <div>Cuando te manden <b style="color:#ddd">su link</b>, ven qué shows coinciden.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Day tabs -->
     <div class="day-tabs">
       <button class="day-tab active" onclick="setDay(0,this)">VIE 13</button>
@@ -361,11 +386,12 @@ header {
     <!-- Stage filters (hidden in poster view) -->
     <div class="stage-filters" id="stage-filters" style="display:none">
       <button class="sf active" data-s="all" onclick="setStage('all',this)">Todos</button>
-      <button class="sf" data-s="Cenco Malls Stage" onclick="setStage('Cenco Malls Stage',this)">🔴 Cenco Malls</button>
-      <button class="sf" data-s="Banco de Chile Stage" onclick="setStage('Banco de Chile Stage',this)">🔵 Banco de Chile</button>
+      <button class="sf" data-s="Cenco Malls Stage" onclick="setStage(this.dataset.s,this)">🔴 Cenco Malls</button>
+      <button class="sf" data-s="Banco de Chile Stage" onclick="setStage(this.dataset.s,this)">🔵 Banco de Chile</button>
+      <button class="sf" data-s="Alternative Stage" onclick="setStage(this.dataset.s,this)">🟠 Alternative</button>
       <button class="sf" data-s="Perry's Stage" onclick="setStage(this.dataset.s,this)">🟣 Perry's</button>
-      <button class="sf" data-s="Cupula" onclick="setStage('Cupula',this)">🟠 Cúpula</button>
-      <button class="sf" data-s="Lotus Stage" onclick="setStage('Lotus Stage',this)">🟢 Lotus</button>
+      <button class="sf" data-s="Lotus Stage" onclick="setStage(this.dataset.s,this)">🟢 Lotus</button>
+      <button class="sf" data-s="Kidzapalooza" onclick="setStage(this.dataset.s,this)">🟡 Kidz</button>
     </div>
 
     <!-- Main content area -->
@@ -375,6 +401,7 @@ header {
   <!-- RIGHT -->
   <div class="agenda-panel">
     <div class="panel-title">⚡ MI AGENDA</div>
+
     <div id="conflicts"></div>
     <div id="agenda-list">
       <div class="empty-agenda">Haz click en los artistas<br>que quieres ver para<br>armar tu agenda</div>
@@ -404,120 +431,140 @@ header {
 // DATA
 // ═══════════════════════════════════════════════
 const SM = {
-  'Cenco Malls Stage':   { color:'#ff3366', short:'CENCO'    },
-  'Banco de Chile Stage':{ color:'#00c4ff', short:'BANCO CH.'},
-  "Perry's Stage":       { color:'#b84fff', short:"PERRY'S"  },
-  'Cupula':              { color:'#ff9500', short:'CÚPULA'   },
-  'Lotus Stage':         { color:'#00e57b', short:'LOTUS'    },
+  'Cenco Malls Stage':    { color:'#ff3366', short:'CENCO'       },
+  'Banco de Chile Stage': { color:'#00c4ff', short:'BANCO CH.'   },
+  'Alternative Stage':    { color:'#ff9500', short:'ALTERNATIVE' },
+  "Perry's Stage":        { color:'#b84fff', short:"PERRY'S"     },
+  'Lotus Stage':          { color:'#00e57b', short:'LOTUS'       },
+  'Kidzapalooza':         { color:'#f0c040', short:'KIDZAPALOOZA'},
 };
 const DAY_NAMES  = ['Viernes 13','Sábado 14','Domingo 15'];
 const DAY_LABELS = ['Viernes 13 de Marzo','Sábado 14 de Marzo','Domingo 15 de Marzo'];
 
-// Schedule data
+// Schedule data — corroborado con horarios oficiales Lollapalooza Chile 2026
 const SCH = [
   [ // VIERNES 13
-    {n:'Benja Valencia',      s:'Cenco Malls Stage',    st:'14:00',en:'14:45'},
-    {n:'Bad Nerves',          s:'Cenco Malls Stage',    st:'15:15',en:'16:00'},
-    {n:'LANY',                s:'Cenco Malls Stage',    st:'16:00',en:'17:00'},
-    {n:'Interpol',            s:'Cenco Malls Stage',    st:'19:00',en:'20:00',h:1},
+    // Cenco Malls Stage
+    {n:'The Warning',         s:'Cenco Malls Stage',    st:'14:30',en:'15:15'},
+    {n:'Gepe',                s:'Cenco Malls Stage',    st:'16:00',en:'17:00'},
+    {n:'Ruel',                s:'Cenco Malls Stage',    st:'18:00',en:'19:00'},
     {n:'Doechii',             s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
-    {n:'Deftones',            s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
     {n:'Sabrina Carpenter',   s:'Cenco Malls Stage',    st:'22:15',en:'23:35',h:1},
+    // Banco de Chile Stage
     {n:'Dracma',              s:'Banco de Chile Stage', st:'13:45',en:'14:30'},
-    {n:'The Warning',         s:'Banco de Chile Stage', st:'14:30',en:'15:15'},
-    {n:'Gepe',                s:'Banco de Chile Stage', st:'16:00',en:'17:00'},
+    {n:'Bad Nerves',          s:'Banco de Chile Stage', st:'15:15',en:'16:00'},
     {n:'Airbag',              s:'Banco de Chile Stage', st:'17:00',en:'18:00'},
-    {n:'Viagra Boys',         s:'Banco de Chile Stage', st:'18:00',en:'19:00'},
-    {n:'HorsegiirL',          s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
-    {n:'Men I Trust',         s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
-    {n:'Tom Morello',         s:'Banco de Chile Stage', st:'22:30',en:'23:30',h:1},
+    {n:'Interpol',            s:'Banco de Chile Stage', st:'19:00',en:'20:00',h:1},
+    {n:'Deftones',            s:'Banco de Chile Stage', st:'21:00',en:'22:15',h:1},
     {n:'Young Cister',        s:'Banco de Chile Stage', st:'23:35',en:'00:50',h:1},
-    {n:'Gondwana',            s:'Banco de Chile Stage', st:'22:45',en:'23:45'},
-    {n:'Cleaver',             s:"Perry's Stage",        st:'14:15',en:'15:00'},
+    // Alternative Stage
+    {n:'Cleaver',             s:'Alternative Stage',    st:'14:15',en:'15:00'},
+    {n:'LANY',                s:'Alternative Stage',    st:'16:00',en:'17:00'},
+    {n:'Viagra Boys',         s:'Alternative Stage',    st:'18:00',en:'19:00'},
+    {n:'Men I Trust',         s:'Alternative Stage',    st:'20:00',en:'21:00'},
+    {n:'Tom Morello',         s:'Alternative Stage',    st:'22:30',en:'23:30',h:1},
+    // Perry's Stage
+    {n:'Benja Valencia',      s:"Perry's Stage",        st:'14:00',en:'14:45'},
+    {n:'Bryartz',             s:"Perry's Stage",        st:'15:00',en:'15:45'},
     {n:'Saske',               s:"Perry's Stage",        st:'16:00',en:'16:45'},
     {n:'3BallMTY',            s:"Perry's Stage",        st:'17:00',en:'17:45'},
     {n:'Six Sex',             s:"Perry's Stage",        st:'18:00',en:'18:45'},
+    {n:'HorsegiirL',          s:"Perry's Stage",        st:'19:00',en:'20:00'},
     {n:'BUNT.',               s:"Perry's Stage",        st:'20:15',en:'21:15'},
     {n:'Ben Böhmer',          s:"Perry's Stage",        st:'21:30',en:'22:45',h:1},
     {n:'Kygo',                s:"Perry's Stage",        st:'23:15',en:'00:30',h:1},
-    {n:'Bryartz',             s:'Cupula',               st:'15:00',en:'15:45'},
-    {n:'Los Machinga',        s:'Cupula',               st:'15:30',en:'16:00'},
-    {n:'Consequence of Energy',s:'Cupula',              st:'16:15',en:'17:00'},
-    {n:'Despertando las Neuronas',s:'Cupula',           st:'16:45',en:'17:30'},
-    {n:'Drink the Sea',       s:'Cupula',               st:'18:00',en:'18:45'},
-    {n:'Amigo de Artistas',   s:'Cupula',               st:'19:30',en:'20:15'},
-    {n:'The La Planta',       s:'Cupula',               st:'21:00',en:'21:45'},
-    {n:'31 Minutos',          s:'Lotus Stage',          st:'18:30',en:'19:50'},
+    // Lotus Stage
+    {n:'Consequence of Energy',s:'Lotus Stage',         st:'16:15',en:'17:00'},
+    {n:'Drink the Sea',       s:'Lotus Stage',          st:'18:00',en:'18:45'},
+    {n:'Amigo de Artistas',   s:'Lotus Stage',          st:'19:30',en:'20:15'},
+    {n:'The La Planta',       s:'Lotus Stage',          st:'21:00',en:'21:45'},
+    {n:'Gondwana',            s:'Lotus Stage',          st:'22:45',en:'23:45'},
+    // Kidzapalooza
+    {n:'Los Machinga',        s:'Kidzapalooza',         st:'15:30',en:'16:00'},
+    {n:'Despertando las Neuronas',s:'Kidzapalooza',     st:'16:45',en:'17:30'},
+    {n:'31 Minutos',          s:'Kidzapalooza',         st:'18:30',en:'19:50'},
   ],
   [ // SÁBADO 14
+    // Cenco Malls Stage
     {n:'Zaturno',             s:'Cenco Malls Stage',    st:'14:45',en:'15:30'},
-    {n:'Royel Otis',          s:'Cenco Malls Stage',    st:'17:00',en:'18:00'},
-    {n:'Katseye',             s:'Cenco Malls Stage',    st:'19:00',en:'20:00'},
+    {n:'Candelabro',          s:'Cenco Malls Stage',    st:'16:15',en:'17:00'},
+    {n:'Djo',                 s:'Cenco Malls Stage',    st:'18:00',en:'19:00',h:1},
     {n:'Turnstile',           s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
-    {n:'Lorde',               s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
     {n:'Tyler, The Creator',  s:'Cenco Malls Stage',    st:'22:15',en:'23:30',h:1},
-    {n:'Fonosida',            s:'Banco de Chile Stage', st:'14:00',en:'14:30'},
-    {n:'Bruno Borlone',       s:'Banco de Chile Stage', st:'14:30',en:'15:15'},
+    // Banco de Chile Stage
+    {n:'Astronautiko',        s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
     {n:'Yami Safdie',         s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
-    {n:'Chicarica',           s:'Banco de Chile Stage', st:'16:45',en:'17:30'},
-    {n:'Judeline',            s:'Banco de Chile Stage', st:'18:00',en:'18:45'},
-    {n:'Guitarricadelafuente',s:'Banco de Chile Stage', st:'18:15',en:'19:00'},
-    {n:'Rubio',               s:'Banco de Chile Stage', st:'19:45',en:'20:45'},
-    {n:'Balu Brigada',        s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
-    {n:'Orishas',             s:'Banco de Chile Stage', st:'22:30',en:'23:45'},
+    {n:'Royel Otis',          s:'Banco de Chile Stage', st:'17:00',en:'18:00'},
+    {n:'Katseye',             s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
+    {n:'Lorde',               s:'Banco de Chile Stage', st:'21:00',en:'22:15',h:1},
     {n:'Los Bunkers',         s:'Banco de Chile Stage', st:'23:30',en:'01:00',h:1},
+    // Alternative Stage
+    {n:'Mano de Obra',        s:'Alternative Stage',    st:'14:45',en:'15:30'},
+    {n:'De Saloon',           s:'Alternative Stage',    st:'16:15',en:'17:00'},
+    {n:'Judeline',            s:'Alternative Stage',    st:'18:00',en:'18:45'},
+    {n:'Balu Brigada',        s:'Alternative Stage',    st:'20:00',en:'21:00'},
+    {n:'Orishas',             s:'Alternative Stage',    st:'22:30',en:'23:45'},
+    // Perry's Stage
+    {n:'Bruno Borlone',       s:"Perry's Stage",        st:'14:30',en:'15:15'},
     {n:'Marlon Breeze',       s:"Perry's Stage",        st:'15:30',en:'16:15'},
     {n:'Aura Bae',            s:"Perry's Stage",        st:'16:30',en:'17:30'},
+    {n:'Katteyes',            s:"Perry's Stage",        st:'17:45',en:'18:30'},
     {n:'AERÓBICA',            s:"Perry's Stage",        st:'18:45',en:'19:45'},
-    {n:'ROZ',                 s:"Perry's Stage",        st:'20:00',en:'21:00'},
+    {n:'RØZ',                 s:"Perry's Stage",        st:'20:00',en:'21:00'},
     {n:'¥ōsūke Yuk1mat$u',   s:"Perry's Stage",        st:'21:15',en:'22:30',h:1},
-    {n:'Tomo Como Rey',       s:"Perry's Stage",        st:'21:30',en:'22:30'},
     {n:'Peggy Gou',           s:"Perry's Stage",        st:'23:00',en:'00:30',h:1},
-    {n:'Astronautiko',        s:'Cupula',               st:'14:00',en:'14:45'},
-    {n:'Como Asesinar a Felipes',s:'Cupula',            st:'15:15',en:'16:00'},
-    {n:'School of Rock',      s:'Cupula',               st:'15:30',en:'16:15'},
-    {n:'Candelabro',          s:'Cupula',               st:'16:15',en:'17:00'},
-    {n:'Wassa Wassa',         s:'Cupula',               st:'17:00',en:'17:45'},
-    {n:'Katteyes',            s:'Cupula',               st:'17:45',en:'18:30'},
-    {n:'Mano de Obra',        s:'Lotus Stage',          st:'14:45',en:'15:30'},
-    {n:'De Saloon',           s:'Lotus Stage',          st:'16:15',en:'17:00'},
-    {n:'Djo',                 s:'Lotus Stage',          st:'18:00',en:'19:00',h:1},
-    {n:'31 Minutos',          s:'Lotus Stage',          st:'18:30',en:'19:50'},
+    // Lotus Stage
+    {n:'Fonosida',            s:'Lotus Stage',          st:'14:00',en:'14:30'},
+    {n:'Como Asesinar a Felipes',s:'Lotus Stage',       st:'15:15',en:'16:00'},
+    {n:'Chicarica',           s:'Lotus Stage',          st:'16:45',en:'17:30'},
+    {n:'Guitarricadelafuente',s:'Lotus Stage',          st:'18:15',en:'19:00'},
+    {n:'Rubio',               s:'Lotus Stage',          st:'19:45',en:'20:45'},
+    {n:'Tomo Como Rey',       s:'Lotus Stage',          st:'21:30',en:'22:30'},
+    // Kidzapalooza
+    {n:'School of Rock',      s:'Kidzapalooza',         st:'15:30',en:'16:15'},
+    {n:'Wassa Wassa',         s:'Kidzapalooza',         st:'17:00',en:'17:45'},
+    {n:'31 Minutos',          s:'Kidzapalooza',         st:'18:30',en:'19:50'},
   ],
   [ // DOMINGO 15
-    {n:'Santo Barrio',        s:'Cenco Malls Stage',    st:'14:00',en:'14:45'},
+    // Cenco Malls Stage
+    {n:'Cristóbal Briceño y Grupo Crisis',s:'Cenco Malls Stage',st:'14:45',en:'15:30'},
     {n:'Bandalos Chinos',     s:'Cenco Malls Stage',    st:'16:15',en:'17:00'},
     {n:'Marina',              s:'Cenco Malls Stage',    st:'18:00',en:'19:00',h:1},
-    {n:'Addison Rae',         s:'Cenco Malls Stage',    st:'19:00',en:'20:00'},
     {n:'Lewis Capaldi',       s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
-    {n:'Skrillex',            s:'Cenco Malls Stage',    st:'21:00',en:'22:15',h:1},
-    {n:'RIIZE',               s:'Cenco Malls Stage',    st:'22:15',en:'23:15'},
     {n:'Chappell Roan',       s:'Cenco Malls Stage',    st:'22:30',en:'00:00',h:1},
-    {n:'Los Borne',           s:'Banco de Chile Stage', st:'13:30',en:'14:00'},
-    {n:'Hesse Kassel',        s:'Banco de Chile Stage', st:'13:45',en:'14:15'},
-    {n:'Miss Javi',           s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
+    // Banco de Chile Stage
+    {n:'Santo Barrio',        s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
     {n:'Joaquina',            s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
-    {n:'Caleb Calloway',      s:'Banco de Chile Stage', st:'16:00',en:'16:45'},
     {n:'Danny Ocean',         s:'Banco de Chile Stage', st:'17:00',en:'18:00',h:1},
-    {n:'TV Girl',             s:'Banco de Chile Stage', st:'18:00',en:'19:00'},
-    {n:'Mau & Ricky',         s:'Banco de Chile Stage', st:'19:30',en:'20:30'},
-    {n:'2 Minutos',           s:'Banco de Chile Stage', st:'20:00',en:'21:00'},
-    {n:'Quilapayún',          s:'Banco de Chile Stage', st:'21:15',en:'22:15',h:1},
+    {n:'Addison Rae',         s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
+    {n:'Skrillex',            s:'Banco de Chile Stage', st:'21:00',en:'22:30',h:1},
+    // Alternative Stage
+    {n:'Hesse Kassel',        s:'Alternative Stage',    st:'13:45',en:'14:15'},
+    {n:'Anttonias',           s:'Alternative Stage',    st:'14:45',en:'15:30'},
+    {n:'Manuel García',       s:'Alternative Stage',    st:'16:15',en:'17:15'},
+    {n:'TV Girl',             s:'Alternative Stage',    st:'18:00',en:'19:00'},
+    {n:'2 Minutos',           s:'Alternative Stage',    st:'20:00',en:'21:00'},
+    {n:'RIIZE',               s:'Alternative Stage',    st:'22:15',en:'23:15'},
+    // Perry's Stage
+    {n:'Miss Javi',           s:"Perry's Stage",        st:'14:00',en:'14:45'},
+    {n:'Mauricio Hernández',  s:"Perry's Stage",        st:'15:00',en:'15:45'},
+    {n:'Caleb Calloway',      s:"Perry's Stage",        st:'16:00',en:'16:45'},
     {n:'HAMDI',               s:"Perry's Stage",        st:'17:00',en:'18:00'},
     {n:'Facebrooklyn',        s:"Perry's Stage",        st:'18:15',en:'19:15'},
     {n:'2HOLLIS & ROMMULAS',  s:"Perry's Stage",        st:'19:30',en:'20:30'},
     {n:'Akriila',             s:"Perry's Stage",        st:'20:45',en:'22:00'},
     {n:'Brutalismus 3000',    s:"Perry's Stage",        st:'22:30',en:'23:45',h:1},
-    {n:'Anttonias',           s:'Cupula',               st:'14:45',en:'15:30'},
-    {n:'Caleuchístico',       s:'Cupula',               st:'15:30',en:'16:15'},
-    {n:'Niebla Niebla',       s:'Cupula',               st:'16:15',en:'17:00'},
-    {n:'Otroarte Música',     s:'Cupula',               st:'17:00',en:'17:45'},
-    {n:'Claudio Valenzuela Trío',s:'Cupula',            st:'17:45',en:'18:45'},
-    {n:'Tikitiklip',          s:'Cupula',               st:'18:30',en:'19:30'},
-    {n:'Cristóbal Briceño y Grupo Crisis',s:'Lotus Stage',st:'14:45',en:'15:30'},
-    {n:'Mauricio Hernández',  s:'Lotus Stage',          st:'15:00',en:'15:45'},
-    {n:'Manuel García',       s:'Lotus Stage',          st:'16:15',en:'17:15'},
+    // Lotus Stage
+    {n:'Los Borne',           s:'Lotus Stage',          st:'13:30',en:'14:00'},
     {n:'La Caravana Mágica',  s:'Lotus Stage',          st:'14:45',en:'15:30'},
+    {n:'Niebla Niebla',       s:'Lotus Stage',          st:'16:15',en:'17:00'},
+    {n:'Claudio Valenzuela Trío',s:'Lotus Stage',       st:'17:45',en:'18:45'},
+    {n:'Ricky & Mau',         s:'Lotus Stage',          st:'19:30',en:'20:30'},
+    {n:'Quilapayún',          s:'Lotus Stage',          st:'21:15',en:'22:15',h:1},
+    // Kidzapalooza
+    {n:'Caleuchístico',       s:'Kidzapalooza',         st:'15:30',en:'16:15'},
+    {n:'Otroarte Música',     s:'Kidzapalooza',         st:'17:00',en:'17:45'},
+    {n:'Tikitiklip',          s:'Kidzapalooza',         st:'18:30',en:'19:30'},
   ],
 ];
 
