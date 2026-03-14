@@ -22,7 +22,7 @@
   --text: #f0f0f5;
   --muted: #888899;
   --cenco: #ff3366;
-  --banco: #00c4ff;
+  --banco: #00c4fa;
   --alt:   #ff9500;
   --perrys: #b84fff;
   --lotus: #00e57b;
@@ -225,7 +225,7 @@ header {
   padding:4px 10px 4px 8px; border-radius:20px;
   font-size:11px; font-weight:600; cursor:pointer;
   border:1.5px solid var(--border); background:var(--card);
-  transition:all .12s; white-space:nowrap; position:relative; overflow:hidden;
+  transition:all .12px; white-space:nowrap; position:relative; overflow:hidden;
   font-family:'Inter',sans-serif;
 }
 .chip::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
@@ -333,6 +333,27 @@ header {
   .conflict-row { font-size:12px; }
   .toast { font-size:13px; padding:11px 22px; }
 }
+
+/* ════════════════════════════════
+   MOBILE CARDS VIEW — FIXES
+   ════════════════════════════════ */
+
+/* Inner content div fills available flex space — check mark (✓) stays at right without overlapping text */
+.artist-card > div:first-child { flex:1; min-width:0; }
+
+@media(max-width:860px) {
+  /* Right padding prevents content from going under the absolute-positioned check mark */
+  .artist-card { padding:12px 38px 12px 16px !important; }
+  /* Long names (e.g. "Cristóbal Briceño y Grupo Crisis") wrap cleanly */
+  .card-name { word-break:break-word; line-height:1.3; white-space:normal; }
+  /* HEADLINER badge sits cleanly below the name */
+  .hbadge { display:inline-block; margin-top:3px; font-size:8px; }
+  /* Tighter stage dots — card-meta wraps less aggressively on narrow screens */
+  .sdot { font-size:10px !important; padding:2px 5px !important; }
+  /* Tighter gap in card-meta row */
+  .card-meta { gap:4px; row-gap:3px; }
+}
+
 </style>
 </head>
 <body>
@@ -449,29 +470,24 @@ const SM = {
 const DAY_NAMES  = ['Viernes 13','Sábado 14','Domingo 15'];
 const DAY_LABELS = ['Viernes 13 de Marzo','Sábado 14 de Marzo','Domingo 15 de Marzo'];
 
-// Schedule data — corroborado con horarios oficiales Lollapalooza Chile 2026
 const SCH = [
   [ // VIERNES 13
-    // Cenco Malls Stage
     {n:'The Warning',         s:'Cenco Malls Stage',    st:'14:30',en:'15:15'},
     {n:'Gepe',                s:'Cenco Malls Stage',    st:'16:00',en:'17:00'},
     {n:'Ruel',                s:'Cenco Malls Stage',    st:'18:00',en:'19:00'},
     {n:'Doechii',             s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
     {n:'Sabrina Carpenter',   s:'Cenco Malls Stage',    st:'22:15',en:'23:35',h:1},
-    // Banco de Chile Stage
     {n:'Dracma',              s:'Banco de Chile Stage', st:'13:45',en:'14:30'},
     {n:'Bad Nerves',          s:'Banco de Chile Stage', st:'15:15',en:'16:00'},
     {n:'Airbag',              s:'Banco de Chile Stage', st:'17:00',en:'18:00'},
     {n:'Interpol',            s:'Banco de Chile Stage', st:'19:00',en:'20:00',h:1},
     {n:'Deftones',            s:'Banco de Chile Stage', st:'21:00',en:'22:15',h:1},
     {n:'Young Cister',        s:'Banco de Chile Stage', st:'23:35',en:'00:50',h:1},
-    // Alternative Stage
     {n:'Cleaver',             s:'Alternative Stage',    st:'14:15',en:'15:00'},
     {n:'LANY',                s:'Alternative Stage',    st:'16:00',en:'17:00'},
     {n:'Viagra Boys',         s:'Alternative Stage',    st:'18:00',en:'19:00'},
     {n:'Men I Trust',         s:'Alternative Stage',    st:'20:00',en:'21:00'},
     {n:'Tom Morello',         s:'Alternative Stage',    st:'22:30',en:'23:30',h:1},
-    // Perry's Stage
     {n:'Benja Valencia',      s:"Perry's Stage",        st:'14:00',en:'14:45'},
     {n:'Bryartz',             s:"Perry's Stage",        st:'15:00',en:'15:45'},
     {n:'Saske',               s:"Perry's Stage",        st:'16:00',en:'16:45'},
@@ -481,38 +497,32 @@ const SCH = [
     {n:'BUNT.',               s:"Perry's Stage",        st:'20:15',en:'21:15'},
     {n:'Ben Böhmer',          s:"Perry's Stage",        st:'21:30',en:'22:45',h:1},
     {n:'Kygo',                s:"Perry's Stage",        st:'23:15',en:'00:30',h:1},
-    // Lotus Stage
     {n:'Consequence of Energy',s:'Lotus Stage',         st:'16:15',en:'17:00'},
     {n:'Drink the Sea',       s:'Lotus Stage',          st:'18:00',en:'18:45'},
     {n:'Amigo de Artistas',   s:'Lotus Stage',          st:'19:30',en:'20:15'},
     {n:'The La Planta',       s:'Lotus Stage',          st:'21:00',en:'21:45'},
     {n:'Gondwana',            s:'Lotus Stage',          st:'22:45',en:'23:45'},
-    // Kidzapalooza
     {n:'Los Machinga',        s:'Kidzapalooza',         st:'15:30',en:'16:00'},
     {n:'Despertando las Neuronas',s:'Kidzapalooza',     st:'16:45',en:'17:30'},
     {n:'31 Minutos',          s:'Kidzapalooza',         st:'18:30',en:'19:50'},
   ],
   [ // SÁBADO 14
-    // Cenco Malls Stage
     {n:'Zaturno',             s:'Cenco Malls Stage',    st:'14:45',en:'15:30'},
     {n:'Candelabro',          s:'Cenco Malls Stage',    st:'16:15',en:'17:00'},
     {n:'Djo',                 s:'Cenco Malls Stage',    st:'18:00',en:'19:00',h:1},
     {n:'Turnstile',           s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
     {n:'Tyler, The Creator',  s:'Cenco Malls Stage',    st:'22:15',en:'23:30',h:1},
-    // Banco de Chile Stage
     {n:'Astronautiko',        s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
     {n:'Yami Safdie',         s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
     {n:'Royel Otis',          s:'Banco de Chile Stage', st:'17:00',en:'18:00'},
     {n:'Katseye',             s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
     {n:'Lorde',               s:'Banco de Chile Stage', st:'21:00',en:'22:15',h:1},
     {n:'Los Bunkers',         s:'Banco de Chile Stage', st:'23:30',en:'01:00',h:1},
-    // Alternative Stage
     {n:'Mano de Obra',        s:'Alternative Stage',    st:'14:45',en:'15:30'},
     {n:'De Saloon',           s:'Alternative Stage',    st:'16:15',en:'17:00'},
     {n:'Judeline',            s:'Alternative Stage',    st:'18:00',en:'18:45'},
     {n:'Balu Brigada',        s:'Alternative Stage',    st:'20:00',en:'21:00'},
     {n:'Orishas',             s:'Alternative Stage',    st:'22:30',en:'23:45'},
-    // Perry's Stage
     {n:'Bruno Borlone',       s:"Perry's Stage",        st:'14:30',en:'15:15'},
     {n:'Marlon Breeze',       s:"Perry's Stage",        st:'15:30',en:'16:15'},
     {n:'Aura Bae',            s:"Perry's Stage",        st:'16:30',en:'17:30'},
@@ -521,39 +531,33 @@ const SCH = [
     {n:'RØZ',                 s:"Perry's Stage",        st:'20:00',en:'21:00'},
     {n:'¥ōsūke Yuk1mat$u',   s:"Perry's Stage",        st:'21:15',en:'22:30',h:1},
     {n:'Peggy Gou',           s:"Perry's Stage",        st:'23:00',en:'00:30',h:1},
-    // Lotus Stage
     {n:'Fonosida',            s:'Lotus Stage',          st:'14:00',en:'14:30'},
     {n:'Como Asesinar a Felipes',s:'Lotus Stage',       st:'15:15',en:'16:00'},
     {n:'Chicarica',           s:'Lotus Stage',          st:'16:45',en:'17:30'},
     {n:'Guitarricadelafuente',s:'Lotus Stage',          st:'18:15',en:'19:00'},
     {n:'Rubio',               s:'Lotus Stage',          st:'19:45',en:'20:45'},
     {n:'Tomo Como Rey',       s:'Lotus Stage',          st:'21:30',en:'22:30'},
-    // Kidzapalooza
     {n:'School of Rock',      s:'Kidzapalooza',         st:'15:30',en:'16:15'},
     {n:'Wassa Wassa',         s:'Kidzapalooza',         st:'17:00',en:'17:45'},
     {n:'31 Minutos',          s:'Kidzapalooza',         st:'18:30',en:'19:50'},
   ],
   [ // DOMINGO 15
-    // Cenco Malls Stage
     {n:'Cristóbal Briceño y Grupo Crisis',s:'Cenco Malls Stage',st:'14:45',en:'15:30'},
     {n:'Bandalos Chinos',     s:'Cenco Malls Stage',    st:'16:15',en:'17:00'},
     {n:'Marina',              s:'Cenco Malls Stage',    st:'18:00',en:'19:00',h:1},
     {n:'Lewis Capaldi',       s:'Cenco Malls Stage',    st:'20:00',en:'21:00',h:1},
     {n:'Chappell Roan',       s:'Cenco Malls Stage',    st:'22:30',en:'00:00',h:1},
-    // Banco de Chile Stage
     {n:'Santo Barrio',        s:'Banco de Chile Stage', st:'14:00',en:'14:45'},
     {n:'Joaquina',            s:'Banco de Chile Stage', st:'15:30',en:'16:15'},
     {n:'Danny Ocean',         s:'Banco de Chile Stage', st:'17:00',en:'18:00',h:1},
     {n:'Addison Rae',         s:'Banco de Chile Stage', st:'19:00',en:'20:00'},
     {n:'Skrillex',            s:'Banco de Chile Stage', st:'21:00',en:'22:30',h:1},
-    // Alternative Stage
     {n:'Hesse Kassel',        s:'Alternative Stage',    st:'13:45',en:'14:15'},
     {n:'Anttonias',           s:'Alternative Stage',    st:'14:45',en:'15:30'},
     {n:'Manuel García',       s:'Alternative Stage',    st:'16:15',en:'17:15'},
     {n:'TV Girl',             s:'Alternative Stage',    st:'18:00',en:'19:00'},
     {n:'2 Minutos',           s:'Alternative Stage',    st:'20:00',en:'21:00'},
     {n:'RIIZE',               s:'Alternative Stage',    st:'22:15',en:'23:15'},
-    // Perry's Stage
     {n:'Miss Javi',           s:"Perry's Stage",        st:'14:00',en:'14:45'},
     {n:'Mauricio Hernández',  s:"Perry's Stage",        st:'15:00',en:'15:45'},
     {n:'Caleb Calloway',      s:"Perry's Stage",        st:'16:00',en:'16:45'},
@@ -562,23 +566,20 @@ const SCH = [
     {n:'2HOLLIS & ROMMULAS',  s:"Perry's Stage",        st:'19:30',en:'20:30'},
     {n:'Akriila',             s:"Perry's Stage",        st:'20:45',en:'22:00'},
     {n:'Brutalismus 3000',    s:"Perry's Stage",        st:'22:30',en:'23:45',h:1},
-    // Lotus Stage
     {n:'Los Borne',           s:'Lotus Stage',          st:'13:30',en:'14:00'},
     {n:'La Caravana Mágica',  s:'Lotus Stage',          st:'14:45',en:'15:30'},
     {n:'Niebla Niebla',       s:'Lotus Stage',          st:'16:15',en:'17:00'},
     {n:'Claudio Valenzuela Trío',s:'Lotus Stage',       st:'17:45',en:'18:45'},
     {n:'Ricky & Mau',         s:'Lotus Stage',          st:'19:30',en:'20:30'},
     {n:'Quilapayún',          s:'Lotus Stage',          st:'21:15',en:'22:15',h:1},
-    // Kidzapalooza
     {n:'Caleuchístico',       s:'Kidzapalooza',         st:'15:30',en:'16:15'},
     {n:'Otroarte Música',     s:'Kidzapalooza',         st:'17:00',en:'17:45'},
     {n:'Tikitiklip',          s:'Kidzapalooza',         st:'18:30',en:'19:30'},
   ],
 ];
 
-// Poster tiers — exactly as the official poster
 const POSTER_TIERS = [
-  { // VIERNES
+  {
     0:['Sabrina Carpenter','Deftones','Doechii'],
     1:['Interpol','Kygo','Tom Morello','Young Cister','Ben Böhmer','BUNT.','Men I Trust',
        'Viagra Boys','HorsegiirL','LANY','Airbag','Gepe','The Warning','Bad Nerves'],
@@ -586,7 +587,7 @@ const POSTER_TIERS = [
     3:['Dracma','Bryartz','Amigo de Artistas','Benja Valencia','Cleaver',
        'Consequence of Energy','Despertando las Neuronas'],
   },
-  { // SÁBADO
+  {
     0:['Tyler, The Creator','Lorde','Turnstile','Los Bunkers'],
     1:['Peggy Gou','Katseye','Djo','Orishas','Royel Otis','¥ōsūke Yuk1mat$u',
        'Balu Brigada','ROZ','Judeline','Yami Safdie','31 Minutos','De Saloon'],
@@ -594,7 +595,7 @@ const POSTER_TIERS = [
        'Tomo Como Rey','Marlon Breeze','Bruno Borlone','Astronautiko','AERÓBICA'],
     3:['Chicarica','Fonosida','Mano de Obra','School of Rock','Candelabro','Wassa Wassa'],
   },
-  { // DOMINGO
+  {
     0:['Chappell Roan','Skrillex','Lewis Capaldi'],
     1:['Addison Rae','Brutalismus 3000','Danny Ocean','Marina','2HOLLIS & ROMMULAS','Akriila',
        'TV Girl','RIIZE','HAMDI','Mau & Ricky','Bandalos Chinos','Manuel García','Joaquina'],
@@ -612,9 +613,9 @@ let currentDay  = 0;
 let viewMode    = 'poster';
 let sortOrder   = 'desc';
 let stageFilter = 'all';
-let selected    = new Set();  // my picks (always editable)
-let friendKeys  = new Set();  // friend's picks (loaded from URL, read-only)
-let hasFriend   = false;      // true when URL contains friend's picks
+let selected    = new Set();
+let friendKeys  = new Set();
+let hasFriend   = false;
 
 // ═══════════════════════════════════════════════
 // UTILS
@@ -622,29 +623,18 @@ let hasFriend   = false;      // true when URL contains friend's picks
 const toMins = t => { let [h,m]=t.split(':').map(Number); if(h<6)h+=24; return h*60+m; };
 const mkKey  = (d,n) => d+'|'+n;
 
-// URL format:
-//   solo mode:   "a:K1,K2"            → you are person A, no friend yet
-//   compare mode:"a:K1,K2;;b:K3,K4"  → a=friend (cyan), b=you (yellow)
-//
-// Flow:
-//   A selects → shares "a:A_PICKS"
-//   B opens   → sees A in cyan → selects own → URL becomes "a:A_PICKS;;b:B_PICKS"
-//   B shares  → A opens "a:A_PICKS;;b:B_PICKS" → full comparison shown to both
-
 function loadFromHash() {
   const raw = location.hash.slice(1);
   if (!raw) return;
   try {
     const decoded = decodeURIComponent(raw);
     if (decoded.includes(';;b:')) {
-      // compare mode: a=friend, b=me
       hasFriend = true;
       const [aPart, bPart] = decoded.split(';;b:');
       const aKeys = aPart.startsWith('a:') ? aPart.slice(2) : aPart;
       aKeys.split(',').filter(Boolean).forEach(k => friendKeys.add(k));
       bPart.split(',').filter(Boolean).forEach(k => selected.add(k));
     } else {
-      // solo mode: a=friend (I received their link), my picks start empty
       hasFriend = true;
       const aKeys = decoded.startsWith('a:') ? decoded.slice(2) : decoded;
       aKeys.split(',').filter(Boolean).forEach(k => friendKeys.add(k));
@@ -659,12 +649,9 @@ function updateHash() {
   let shareHash = '';
 
   if (hasFriend && frStr) {
-    // page URL always keeps both sets so browser back works
     pageHash = 'a:' + frStr + (myStr ? ';;b:' + myStr : '');
-    // share URL = same (whoever opens this sees full comparison)
     shareHash = pageHash;
   } else {
-    // solo: encode my picks as "a:" so recipient sees them as the friend's
     pageHash  = myStr ? 'a:' + myStr : '';
     shareHash = pageHash;
   }
@@ -849,7 +836,7 @@ function renderTimeline() {
       if (isMatch) cls+=' match sel'; else if (isMine) cls+=' sel'; else if (isFriend) cls+=' friend';
       return `<div class="${cls}" data-s="${a.s}" onclick="toggle(${a.di},${JSON.stringify(a.n)})">
         <div>
-          <div class="card-name">${a.n}${a.h?` <span class="hbadge">HEADLINER</span>`:''}</div>
+          <div class="card-name">${a.n}${a.h?`<br><span class="hbadge">HEADLINER</span>`:''}</div>
           <div class="card-meta">
             <span class="card-time">🕐 ${a.st}–${a.en}</span>
             <span class="sdot" data-s="${a.s}">${SM[a.s]?.short||a.s}</span>
@@ -883,7 +870,6 @@ function renderAgenda() {
         ${conflicts.map(([a,b])=>`<div class="conflict-row"><b>${a.n}</b> (${a.st}) ↔ <b>${b.n}</b> (${b.st}) · ${DAY_NAMES[a.di]}</div>`).join('')}
        </div>` : '';
 
-  // Comparison panel — always visible when hasFriend
   const liveEl = document.getElementById('compare-live-section');
   const compareBox = document.getElementById('compare-box');
   if (hasFriend) {
